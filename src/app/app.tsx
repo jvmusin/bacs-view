@@ -39,11 +39,11 @@ type classes = {
 const styles: StyleRules = {
   main: {
     margin: 'auto',
-    maxWidth: '90%',
+    maxWidth: '1500px',
   },
 
   contestListWrapper: {
-    padding: '15px 10px',
+    padding: '15px 20px',
     backgroundColor: '#A0BDCB',
   },
 };

@@ -21,7 +21,9 @@ const styles: StyleRules = {
   cardWrapper: {
     marginBottom: 20,
   },
-  wrapper: {
+
+  reload: {
+    marginLeft: '-13px',
   }
 }
 
@@ -55,14 +57,14 @@ class ContestList extends React.Component<IContestListProps, IContestListState> 
   render() {
     const { classes } = this.props;
     return (<div>
-      <div className={classes.wrapper} >
-        <IconButton style={{ verticalAlign: 'middle' }} color='contrast' onClick={this.fetchContests}>
-          <Update />
-        </IconButton>
-        <Typography type='title' style={{ display: 'inline' }}>
+      <div>
+        <Typography type='title' style={{ color: 'white' }}>
           Список доступных вам контестов:
        </Typography>
       </div>
+      <IconButton className={classes.reload} color='accent' onClick={this.fetchContests}>
+        <Update />
+      </IconButton>
       {
         this.state.contests &&
         this.state.contests
@@ -74,7 +76,8 @@ class ContestList extends React.Component<IContestListProps, IContestListState> 
           </div>
           )
       }
-    </div>)
+    </div>
+    )
   }
 
 }

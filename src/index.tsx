@@ -19,9 +19,7 @@ const render = Component => {
   );
 }
 
-AuthService.Auth()
-  .catch()  
-  .then(() => render(App));
+render(App)
 
 if (module.hot) {
   module.hot.accept('./app/app', () => {

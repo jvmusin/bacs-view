@@ -18,3 +18,21 @@ export type ProblemInfo = {
   timeLimitMillis: number;
   memoryLimitBytes: number
 };
+
+export enum AuthState {
+  Success,
+  Fail,
+  None,
+};
+
+export enum UserRole {
+  Admin =  'ROLE_ADMIN',
+  User = 'ROLE_USER',
+}
+
+export type SessionInfo = {
+  userid: number,
+  authorities: UserRole[],
+  sub: string,
+  exp?: number,
+}

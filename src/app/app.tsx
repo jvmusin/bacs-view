@@ -12,7 +12,9 @@ import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import TagFacesIcon from 'material-ui-icons/TagFaces'
+
+import Header from './header';
+import Auth from '../auth/auth';
 
 const muiTheme = createMuiTheme({
   typography: {
@@ -53,20 +55,14 @@ interface IAppProps {
 
 const App = (props: IAppProps) => (
   <MuiThemeProvider theme={muiTheme}>
-    <div className={props.classes.main}>
-      <AppBar position='static' color='primary'>
-        <Toolbar>
-          <Typography type='title' color='inherit'>
-            Добро пожаловать, любитель контестов!
-          </Typography>
-          &nbsp;
-          <TagFacesIcon />
-        </Toolbar>
-      </AppBar>
-      <Paper className={props.classes.contestListWrapper}>
-        <ContestList />
-      </Paper>
-    </div>
+    <Auth>
+      <div className={props.classes.main}>
+        <Header />
+        <Paper className={props.classes.contestListWrapper}>
+          <ContestList />
+        </Paper>
+      </div>
+    </Auth>
   </MuiThemeProvider>
 );
 

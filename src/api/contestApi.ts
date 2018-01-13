@@ -5,7 +5,7 @@ const defaultHeaders = {
   'Content-Type': 'application/json',
 };
 
-axios.defaults.baseURL = 'http://localhost/';
+axios.defaults.baseURL = 'https://bacs007.herokuapp.com/';
 axios.defaults.headers = defaultHeaders;
 
 class ContestApi {

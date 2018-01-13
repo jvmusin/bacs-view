@@ -1,12 +1,12 @@
 {
   "name": "bacs-view",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": "https://github.com/Ploffi/bacs-view",
   "author": "MKhasanov <ploffi@yandex.ru>",
-  "private": true,
   "scripts": {
     "start": "webpack-dev-server --config dev.webpack.config.js",
-    "prod": "webpack --config prod.webpack.config.js"
+    "prod": "webpack --config prod.webpack.config.js",
+    "deploy": "yarn prod && node publish.js && rd /s /q dist"
   },
   "dependencies": {
     "axios": "^0.17.1",
@@ -28,6 +28,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^0.1.17",
+    "gh-pages": "^1.1.0",
     "html-webpack-plugin": "^2.30.1",
     "react-hot-loader": "^3.1.3",
     "source-map-loader": "^0.2.1",

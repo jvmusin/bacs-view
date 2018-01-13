@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const output_directory = "build";
+const output_directory = "dist";
 
 var plugins = [
     new CleanWebpackPlugin([output_directory]),

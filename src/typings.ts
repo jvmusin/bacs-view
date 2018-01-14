@@ -12,8 +12,8 @@ export type FullContestInfo = {
 };
 
 export type ProblemInfo = {
-  name: '';
-  indexInContest: number;
+  name: string;
+  index: string;
   statementUrl: string;
   timeLimitMillis: number;
   memoryLimitBytes: number

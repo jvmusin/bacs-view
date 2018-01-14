@@ -8,6 +8,7 @@ import Typography from 'material-ui/Typography';
 import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '../DateFormats';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { StyleRules, withStyles } from 'material-ui/styles';
+import ProblemTable from '../problem/problemTable';
 
 interface IContestCardProps {
   contest: ContestMeta;
@@ -65,6 +66,10 @@ const ContestCard = (props: IContestCardProps) => {
           </Typography>
         </div>
       </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <ProblemTable
+          contest={contest} />
+      </ExpansionPanelDetails>
     </ExpansionPanel>
   )
 };

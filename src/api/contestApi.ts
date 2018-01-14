@@ -15,7 +15,7 @@ class ContestApi {
   }
 
   static GetContestInfo(id: ContestMeta['id']): Promise<FullContestInfo> {
-    return axios.get(`contests${id}`)
+    return axios.get(`contests/${id}`)
       .then(response => response.data);
   }
 }

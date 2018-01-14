@@ -46,12 +46,10 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell> index </TableCell>
-            <TableCell> name </TableCell>
-            <TableCell> statement url </TableCell>
-            <TableCell> Tests count </TableCell>
-            <TableCell> Time limit (s) </TableCell>
-            <TableCell> Memory Limit (MB) </TableCell>
+            <TableCell></TableCell>
+            <TableCell> Название </TableCell>
+            <TableCell> Условие </TableCell>
+            <TableCell> Ограничения </TableCell>
           </TableRow>
         </TableHead>
         <TableBody style={{ cursor: 'pointer' }} >
@@ -67,8 +65,11 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
                       {problem.statementUrl ? 'Условие задачи' : ''}
                     </a>
                   </TableCell>
-                  <TableCell>{problem.timeLimitMillis}</TableCell>
-                  <TableCell>{toMB(problem.memoryLimitBytes)}</TableCell>
+                  <TableCell>
+                    {toMB(problem.memoryLimitBytes)} MB
+                    <br />
+                    {Math.floor(problem.timeLimitMillis / 1000)} сек.
+                  </TableCell>
                 </TableRow>
               ))
           }

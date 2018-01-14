@@ -34,7 +34,6 @@ export default class AuthService {
   static Auth(login: string, password: string): Promise<AuthState> {
     return AuthApi.Auth(login, password)
       .then(response => {
-        console.log(response);
         const token = response.headers[authHeaderName];
         AuthApi.SetJWT(authHeaderName, token);
         document.cookie = authCookieJWT + '=' + token;

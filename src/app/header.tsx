@@ -7,16 +7,39 @@ import IconButton from 'material-ui/IconButton';
 import AppBar from 'material-ui/AppBar';
 import { SessionInfo } from '../typings';
 import AuthService from '../auth/authService';
+import { withStyles, StyleRules } from 'material-ui/styles';
+import { ClassNameMap } from 'material-ui/styles/withStyles';
+import Popover from 'material-ui/Popover';
+import List, { ListItem, ListItemText, ListSubheader } from 'material-ui/List';
 
 interface IHeaderState {
   sessionInfo: SessionInfo;
+  isUserPopoverOpen: boolean;
+  anchorEl: HTMLElement;
 }
 
-class Header extends React.Component<any, IHeaderState> {
+type ClassKey = 'iconSize' | 'popeverContent';
+
+const styles: (theme) => StyleRules<ClassKey> = theme => ({
+  iconSize: {
+    fontSize: '2.5rem',
+  },
+  popeverContent: {
+    margin: theme.spacing.unit,
+  },
+});
+
+interface IHeaderProps {
+  classes: ClassNameMap<ClassKey>;
+}
+
+class Header extends React.Component<IHeaderProps, IHeaderState> {
   constructor(props) {
     super(props);
     this.state = {
-      sessionInfo: null
+      sessionInfo: null,
+      anchorEl: null,
+      isUserPopoverOpen: false,
     };
   }
 
@@ -27,14 +50,53 @@ class Header extends React.Component<any, IHeaderState> {
     });
   }
 
+  handleUserIconClick = (event) => {
+    this.setState({
+      isUserPopoverOpen: true,
+      anchorEl: event.target,
+    });
+  }
+
+  handleClose = () => this.setState({ isUserPopoverOpen: false })
+
   render() {
+    const { classes } = this.props;
+    const { anchorEl, isUserPopoverOpen, sessionInfo } = this.state;
     return <AppBar position='static' color='primary'>
       <Toolbar >
         <div>
           <IconButton
+            onClick={this.handleUserIconClick}
             color='contrast'>
-            <AccountCircle />
+            <AccountCircle className={classes.iconSize} />
           </IconButton>
+          <Popover
+            open={isUserPopoverOpen}
+            anchorEl={anchorEl}
+            onClose={this.handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+          >
+            {
+              sessionInfo &&
+              <List>
+                <ListSubheader>Ваши роли:</ListSubheader>
+                {
+                  sessionInfo.authorities.map(role => (
+                    <ListItem key={role}>
+                      <ListItemText secondary={role} />
+                    </ListItem>
+                  ))
+                }
+              </List>
+            }
+          </Popover>
         </div>
         <Typography type='title' color='inherit'>
           <span>Добро пожаловать, </span>
@@ -49,4 +111,6 @@ class Header extends React.Component<any, IHeaderState> {
     </AppBar>
   }
 }
-export default Header;
+
+
+export default withStyles(styles)(Header as any);

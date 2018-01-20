@@ -45,9 +45,7 @@ const App = (props: IAppProps) => (
         <Router>
           <Paper className={props.classes.contestListWrapper}>
             <Route path='/' exact component={ContestList} />
-            <Route path='/contest/:contestId' render={({ match }) =>
-                <ContestController match={match} />
-            } />
+            <Route path='/contest/:contestId/' component={ContestController} />
           </Paper>
         </Router>
       </div>

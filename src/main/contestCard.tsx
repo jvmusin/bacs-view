@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { ContestMeta } from '../typings';
+import ProblemTableController from '../problem/problemTableController';
+import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '../DateFormats';
+
 import ExpansionPanel, {
   ExpansionPanelDetails,
   ExpansionPanelSummary,
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
-import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '../DateFormats';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { StyleRules, withStyles } from 'material-ui/styles';
-import ProblemTable from '../problem/problemTable';
+
 import { Link } from 'react-router-dom';
 import { match } from 'react-router';
 
@@ -76,7 +78,7 @@ const ContestCard = (props: IContestCardProps) => {
             </Link>
           }
           <div>
-            <ProblemTable
+            <ProblemTableController
               contestId={contest.id} />
           </div>
         </div>

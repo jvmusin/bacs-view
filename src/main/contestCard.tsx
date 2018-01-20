@@ -9,6 +9,8 @@ import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '..
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { StyleRules, withStyles } from 'material-ui/styles';
 import ProblemTable from '../problem/problemTable';
+import { Link } from 'react-router-dom';
+import { match } from 'react-router';
 
 interface IContestCardProps {
   contest: ContestMeta;
@@ -67,8 +69,17 @@ const ContestCard = (props: IContestCardProps) => {
         </div>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
-        <ProblemTable
-          contest={contest} />
+        <div>
+          {
+            <Link to={`/contest/${contest.id}`}>
+              Войти в контест
+            </Link>
+          }
+          <div>
+            <ProblemTable
+              contestId={contest.id} />
+          </div>
+        </div>
       </ExpansionPanelDetails>
     </ExpansionPanel>
   )

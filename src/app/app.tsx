@@ -1,35 +1,20 @@
 import * as React from 'react';
 
-import { MuiThemeProvider, createMuiTheme, withStyles, StyleRules } from 'material-ui/styles';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
 
-import blueGrey from 'material-ui/colors/blueGrey';
-import amber from 'material-ui/colors/amber';
-import red from 'material-ui/colors/red';
-import grey from 'material-ui/colors/grey';
-
-import ContestList from '../contest/contestList';
 import Paper from 'material-ui/Paper';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import { StyleRules, withStyles } from 'material-ui/styles';
 
 import Header from './header';
 import Auth from '../auth/auth';
+import Theme from './theme';
 
-const muiTheme = createMuiTheme({
-  typography: {
-    fontFamily: 'Segoe UI',
-  },
-  palette: {
-    primary: blueGrey,
-    secondary: amber,
-    error: red,
-    grey: grey,
-    text: {
-      secondary: '#7B7B7B'
-    }
-  },
-});
+import ContestList from '../main/contestList';
+import ContestController from '../contest/contestController';
 
 type classes = {
   main: string,
@@ -48,22 +33,26 @@ const styles: StyleRules = {
   },
 };
 
-
 interface IAppProps {
   classes?: classes;
 }
 
 const App = (props: IAppProps) => (
-  <MuiThemeProvider theme={muiTheme}>
+  <Theme>
     <Auth>
       <div className={props.classes.main}>
         <Header />
-        <Paper className={props.classes.contestListWrapper}>
-          <ContestList />
-        </Paper>
+        <Router>
+          <Paper className={props.classes.contestListWrapper}>
+            <Route path='/' exact component={ContestList} />
+            <Route path='/contest/:contestId' render={({ match }) =>
+                <ContestController match={match} />
+            } />
+          </Paper>
+        </Router>
       </div>
     </Auth>
-  </MuiThemeProvider>
+  </Theme>
 );
 
 export default withStyles(styles)<IAppProps>(App);

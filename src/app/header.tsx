@@ -2,7 +2,7 @@ import * as React from 'react';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import TagFacesIcon from 'material-ui-icons/TagFaces';
-import AccountCircle from 'material-ui-icons/AccountCircle';
+import ExitToApp from 'material-ui-icons/ExitToApp';
 import IconButton from 'material-ui/IconButton';
 import AppBar from 'material-ui/AppBar';
 import { SessionInfo } from '../typings';
@@ -14,20 +14,18 @@ import List, { ListItem, ListItemText, ListSubheader } from 'material-ui/List';
 
 interface IHeaderState {
   sessionInfo: SessionInfo;
-  isUserPopoverOpen: boolean;
-  anchorEl: HTMLElement;
 }
 
-type ClassKey = 'iconSize' | 'popeverContent';
+type ClassKey = 'iconSize' | 'flex';
 
-const styles: (theme) => StyleRules<ClassKey> = theme => ({
+const styles: StyleRules<ClassKey> = {
   iconSize: {
-    fontSize: '2.5rem',
+    fontSize: '2.4rem',
   },
-  popeverContent: {
-    margin: theme.spacing.unit,
-  },
-});
+  flex: {
+    flex: 1,
+  }
+};
 
 interface IHeaderProps {
   classes: ClassNameMap<ClassKey>;
@@ -38,8 +36,6 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     super(props);
     this.state = {
       sessionInfo: null,
-      anchorEl: null,
-      isUserPopoverOpen: false,
     };
   }
 
@@ -50,63 +46,33 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     });
   }
 
-  handleUserIconClick = (event) => {
-    this.setState({
-      isUserPopoverOpen: true,
-      anchorEl: event.target,
-    });
+  logout = (event) => {
+    AuthService.Logout();
+    window.location.reload(false);
   }
-
-  handleClose = () => this.setState({ isUserPopoverOpen: false })
 
   render() {
     const { classes } = this.props;
-    const { anchorEl, isUserPopoverOpen, sessionInfo } = this.state;
+    const { sessionInfo } = this.state;
     return <AppBar position='static' color='primary'>
       <Toolbar >
-        <div>
-          <IconButton
-            onClick={this.handleUserIconClick}
-            color='contrast'>
-            <AccountCircle className={classes.iconSize} />
-          </IconButton>
-          <Popover
-            open={isUserPopoverOpen}
-            anchorEl={anchorEl}
-            onClose={this.handleClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-          >
+        <Typography className={classes.flex} type='title' color='inherit'>
+          <span>Welcome!</span>
+        </Typography>
+
+        <Typography type='title' color='inherit'>
+          <span>
             {
               sessionInfo &&
-              <List>
-                <ListSubheader>Ваши роли:</ListSubheader>
-                {
-                  sessionInfo.authorities.map(role => (
-                    <ListItem key={role}>
-                      <ListItemText secondary={role} />
-                    </ListItem>
-                  ))
-                }
-              </List>
+              sessionInfo.sub
             }
-          </Popover>
-        </div>
-        <Typography type='title' color='inherit'>
-          <span>Добро пожаловать, </span>
-          {
-            this.state.sessionInfo
-              ? this.state.sessionInfo.sub
-              : 'любитель контестов'
-          }
-          !
+          </span>
         </Typography>
+        <IconButton
+          onClick={this.logout}
+          color='contrast'>
+          <ExitToApp className={classes.iconSize} />
+        </IconButton>
       </Toolbar>
     </AppBar>
   }

@@ -15,15 +15,24 @@ function parseJwt(token): SessionInfo {
   return JSON.parse(window.atob(base64));
 }
 
-const authCookieJWT = 'AuthBacsToken';
 
-const getFromCookies = (paramName: string) =>
-  (document.cookie
+const findParam = (paramName: string) => (
+  document.cookie
     .split(';')
     .map(str => str.trimLeft())
-    .find(value => value.startsWith(paramName)) || '')
-    .substring(1 + paramName.length);
+    .find(value => value.startsWith(paramName))
+  || '');
 
+const getFromCookies = (paramName: string) => {
+  return findParam(paramName)
+    .substring(1 + paramName.length);
+}
+
+const clearCookieParam = (paramName: string) => {
+  document.cookie = paramName + '=';
+}
+
+const authCookieJWT = 'AuthBacsToken';
 const authHeaderName = 'authorization';
 
 export default class AuthService {
@@ -61,5 +70,9 @@ export default class AuthService {
     }
 
     return AuthState.None;
+  }
+
+  static Logout() {
+    clearCookieParam(authCookieJWT);
   }
 }

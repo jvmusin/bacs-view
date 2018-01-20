@@ -11,7 +11,7 @@ import { withStyles, StyleRules } from 'material-ui/styles';
 import ContestApi from '../api/contestApi';
 
 interface IProblemTableProps {
-  contest: ContestMeta;
+  contestId: ContestMeta['id'];
 }
 
 interface IProblemTableState {
@@ -19,13 +19,6 @@ interface IProblemTableState {
 }
 
 const toMB = (byte) => byte / (1024 * 1024) | 0;
-
-const styles: StyleRules = {
-  'textFieldMargin': {
-    marginRight: '10px',
-  }
-};
-
 
 class ProblemTable extends React.Component<IProblemTableProps, IProblemTableState> {
   constructor(props) {
@@ -36,7 +29,7 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
   }
 
   componentDidMount() {
-    ContestApi.GetContestInfo(this.props.contest.id)
+    ContestApi.GetContestInfo(this.props.contestId)
       .then(info => this.setState({ problems: info.problems }));
   }
 
@@ -57,7 +50,7 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
             problems &&
             problems
               .map((problem, index) => (
-                <TableRow>
+                <TableRow key={problem.index}>
                   <TableCell>{problem.index}</TableCell>
                   <TableCell>{problem.name}</TableCell>
                   <TableCell>

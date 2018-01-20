@@ -6,6 +6,7 @@ config.devServer = {
   contentBase: './build',
   hot: true,
   inline: true,
+  historyApiFallback: true,
 };
 
 config.entry.app.unshift('react-hot-loader/patch');

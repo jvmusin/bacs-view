@@ -15,5 +15,6 @@ const plugins = [
 const config = require("./base.webpack.config.js")
 
 config.plugins.push(...plugins);
+config.output.publicPath = '/bacs-view/';
 
 module.exports = config;

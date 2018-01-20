@@ -16,3 +16,5 @@ interface IStandingsProps {
 const Standings = (props: IStandingsProps) => {
   return <div>213</div>;
 }
+
+export default Standings;

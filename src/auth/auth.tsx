@@ -12,7 +12,8 @@ import { isNullOrUndefined } from 'util';
 import { AuthState } from '../typings';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
-
+import { Fragment } from 'react';
+import { CircularProgress } from 'material-ui/Progress';
 
 interface IAuthProps {
   classes: any;
@@ -23,6 +24,7 @@ interface IAuthState {
   password: string;
   authState: AuthState;
   errorMessage: string;
+  loading: boolean;
 }
 
 class Auth extends React.Component<any, IAuthState> {
@@ -33,13 +35,15 @@ class Auth extends React.Component<any, IAuthState> {
       password: '',
       authState: AuthService.CheckAuth(),
       errorMessage: '',
+      loading: false,
     };
   }
 
   signUp = () => {
+    this.setState({ loading: true, errorMessage: '' });
     AuthService.SignUp(this.state.login, this.state.password)
       .catch(error => {
-        this.setState({ errorMessage: error.response.data });
+        this.setState({ errorMessage: error.response.data, loading: false, });
         return Promise.reject(AuthState.Fail);
       })
       .then(() => this.tryAuthorize())
@@ -47,8 +51,16 @@ class Auth extends React.Component<any, IAuthState> {
   }
 
   tryAuthorize = () => {
+    if (!this.state.loading)
+      this.setState({ loading: true, errorMessage: '' });
+
     AuthService.Auth(this.state.login, this.state.password)
-      .then(authState => this.setState({ authState }));
+      .then(authState => this.setState({ authState, loading: false }))
+      .catch(reason => this.setState({
+        errorMessage: 'Не удалось авторизоваться ;(',
+        authState: AuthState.Fail,
+        loading: false
+      }));
   }
 
   handleInputKeyPressed = (event) => {
@@ -89,19 +101,28 @@ class Auth extends React.Component<any, IAuthState> {
         />
         <span>
           {
-            this.state.errorMessage 
+            this.state.errorMessage
             &&
             this.state.errorMessage
           }
         </span>
       </DialogContent>
       <DialogActions>
-        <Button onClick={this.signUp} color='primary'>
-          Зарегистрироваться
-        </Button>
-        <Button onClick={this.tryAuthorize} color='primary'>
-          Войти
-        </Button>
+        {
+          !this.state.loading
+          &&
+          <Fragment>
+            <Button onClick={this.signUp} color='primary'>
+              Зарегистрироваться
+              </Button>
+            <Button onClick={this.tryAuthorize} color='primary'>
+              Войти
+            </Button>
+          </Fragment>
+          ||
+          <CircularProgress className={this.props.classes.progress} size={30}  />
+        }
+
       </DialogActions>
     </Dialog>
   }
@@ -110,6 +131,10 @@ class Auth extends React.Component<any, IAuthState> {
 const styles: StyleRules = {
   root: {
     height: 'inherit !important'
+  },
+  progress: {
+    minWidth: 'initial',
+    marginRight: 40,
   }
 }
 

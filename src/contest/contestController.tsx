@@ -46,9 +46,6 @@ export default class ContestController extends React.Component<IContestControlle
     super(props);
     const currentTab = tabs.find(link => props.location.pathname.endsWith(link.pathTo))
       || tabs[0];
-      
-    if (currentTab.pathTo === 'submits')
-      this.fetchStandings();
 
     this.state = {
       contestInfo: null,
@@ -67,9 +64,8 @@ export default class ContestController extends React.Component<IContestControlle
 
   fetchContestInfo() {
     const contestId = this.props.match.params.contestId;
-    if (contestId)
-      ContestApi.GetContestInfo(contestId)
-        .then(contestInfo => this.setState({ contestInfo }));
+    return ContestApi.GetContestInfo(contestId)
+      .then(contestInfo => this.setState({ contestInfo }));
   }
 
   fetchStandings() {
@@ -80,13 +76,13 @@ export default class ContestController extends React.Component<IContestControlle
   }
 
   componentDidMount() {
-    this.fetchContestInfo();
+    this.fetchContestInfo()
+      .then(() => this.state.currentTab === 'submits' && this.fetchStandings);
   }
 
   render() {
     const { match, history } = this.props;
-    const { currentTab } = this.state;
-    const contestInfo = this.state.contestInfo;
+    const { currentTab, contestInfo } = this.state;
     const problems = contestInfo && contestInfo.problems || [];
     const current = match.url + '/';
     const toProblems = current + 'problems';

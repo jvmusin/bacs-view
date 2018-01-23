@@ -70,7 +70,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         </Typography>
         <IconButton
           onClick={this.logout}
-          color='contrast'>
+          color='secondary'>
           <ExitToApp className={classes.iconSize} />
         </IconButton>
       </Toolbar>

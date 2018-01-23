@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProblemInfo, ContestMeta } from '../typings';
+import { ProblemInfo, ContestMeta, Language } from '../typings';
 import Select from 'material-ui/Select';
 import Button from 'material-ui/Button';
 import Input, { InputLabel } from 'material-ui/Input';
@@ -22,10 +22,14 @@ interface ISubmitState {
   solution: string;
 }
 
-const avaliableLanguages = [
-  'Python3',
-  'ne python',
-  'ave js',
+const avaliableLanguages: Language[] = [
+    'C',
+    'CPP',
+    'Delphi',
+    'FPC',
+    'Python2',
+    'Python3',
+    'Mono',
 ];
 
 class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
@@ -79,7 +83,7 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
             </Select>
           </FormControl>
           <FormControl>
-            <InputLabel htmlFor='language'>Задача</InputLabel>
+            <InputLabel htmlFor='language'>Язык</InputLabel>
             <Select
               autoWidth
               value={this.state.language}

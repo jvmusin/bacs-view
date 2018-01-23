@@ -30,6 +30,11 @@ class ContestApi {
     return axios.get(`contests/${contestId}/standings`)
       .then(response => response.data);
   }
+
+  static GetSubmissions(contestId) {
+    return axios.get(`contests/${contestId}/submissions/my`)
+      .then(response => response.data);
+  }
 }
 
 export default ContestApi;

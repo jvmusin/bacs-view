@@ -4,7 +4,6 @@ import TableRow from 'material-ui/Table/TableRow';
 import TableCell from 'material-ui/Table/TableCell';
 import TableBody from 'material-ui/Table/TableBody';
 import TableHead from 'material-ui/Table/TableHead';
-import TextField from 'material-ui/TextField';
 import { ProblemInfo } from '../typings';
 
 interface IProblemTableProps {

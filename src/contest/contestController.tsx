@@ -4,10 +4,11 @@ import { Route, match, Redirect, Switch } from 'react-router';
 import { History, Location } from 'history';
 import ContestMenu from './contestMenu';
 import ProblemTable from '../problem/problemTable';
-import { ContestMeta, ProblemInfo, FullContestInfo } from '../typings';
+import { ContestMeta, ProblemInfo, FullContestInfo, Submission } from '../typings';
 import ContestApi from '../api/contestApi';
 import SubmitForm from './submitForm';
-import Standings from './standings';
+import Submits from './submits';
+import Standing from './standing';
 
 interface IContestControllerProps {
   match: match<any>;
@@ -18,7 +19,8 @@ interface IContestControllerProps {
 interface IContestControllerState {
   contestInfo: FullContestInfo;
   currentTab: Tab['pathTo'];
-  standings: any;
+  standing: any;
+  submits: Submission[];
 }
 
 export type Tab = {
@@ -32,6 +34,10 @@ const tabs: Tab[] = [
     pathTo: 'problems'
   },
   {
+    name: 'Монитор',
+    pathTo: 'standing'
+  },
+  {
     name: 'Отправка',
     pathTo: 'submit'
   },
@@ -42,6 +48,7 @@ const tabs: Tab[] = [
 ];
 
 export default class ContestController extends React.Component<IContestControllerProps, IContestControllerState> {
+  fetchBypageName;
   constructor(props: IContestControllerProps) {
     super(props);
     const currentTab = tabs.find(link => props.location.pathname.endsWith(link.pathTo))
@@ -50,13 +57,22 @@ export default class ContestController extends React.Component<IContestControlle
     this.state = {
       contestInfo: null,
       currentTab: currentTab.pathTo,
-      standings: null,
+      standing: null,
+      submits: [],
     };
+
+    this.fetchBypageName = (pageName) => {
+      pageName = pageName || this.state.currentTab;
+      switch(pageName) {
+        case 'submits': return this.fetchSubmits();
+        case 'standing': return this.fetchStanding();
+      }
+    }
   }
 
   handleTabChange = (_, value) => {
-    if (value === 'submits')
-      this.fetchStandings();
+    this.fetchBypageName(value);
+
     this.setState({ currentTab: value }, () =>
       this.props.history.push(this.props.match.url + '/' + value)
     );
@@ -68,16 +84,23 @@ export default class ContestController extends React.Component<IContestControlle
       .then(contestInfo => this.setState({ contestInfo }));
   }
 
-  fetchStandings() {
+  fetchStanding() {
     if (this.state.contestInfo)
       ContestApi.GetStandings(this.state.contestInfo.meta.id)
-        .then(standings => this.setState({ standings }))
+        .then(standing => this.setState({ standing }))
+        .catch(console.log);
+  }
+
+  fetchSubmits() {
+    if (this.state.contestInfo)
+      ContestApi.GetSubmissions(this.state.contestInfo.meta.id)
+        .then(submits => this.setState({ submits }))
         .catch(console.log);
   }
 
   componentDidMount() {
     this.fetchContestInfo()
-      .then(() => this.state.currentTab === 'submits' && this.fetchStandings);
+      .then(() => this.fetchBypageName());
   }
 
   render() {
@@ -109,7 +132,11 @@ export default class ContestController extends React.Component<IContestControlle
         <Route
           exact
           path={current + 'submits'}
-          render={(props) => <Standings standings={this.state.standings} />} />
+          render={(props) => <Submits submissions={this.state.submits} />} />
+        <Route
+          exact
+          path={current + 'standing'}
+          render={(props) => <div>Представь что это монитор на котором ты выигрываешь!</div>} />
       </Switch>
     </div>
   }

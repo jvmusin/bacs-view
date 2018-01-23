@@ -62,7 +62,7 @@ class ContestList extends React.Component<IContestListProps, IContestListState> 
           Список доступных вам контестов:
        </Typography>
       </div>
-      <IconButton className={classes.reload} color='accent' onClick={this.fetchContests}>
+      <IconButton className={classes.reload} color='secondary' onClick={this.fetchContests}>
         <Update />
       </IconButton>
       {

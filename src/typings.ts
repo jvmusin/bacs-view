@@ -26,7 +26,7 @@ export enum AuthState {
 };
 
 export enum UserRole {
-  Admin =  'ROLE_ADMIN',
+  Admin = 'ROLE_ADMIN',
   User = 'ROLE_USER',
 }
 
@@ -36,3 +36,33 @@ export type SessionInfo = {
   sub: string,
   exp?: number,
 }
+
+export type User = {
+  id: number;
+  username: string;
+};
+
+export type Language =
+  'C' |
+  'CPP' |
+  'Delphi' |
+  'FPC' |
+  'Python2' |
+  'Python3' |
+  'Mono'
+  ;
+
+export type Submission = {
+  id: number;
+  contest: ContestMeta;
+  problem: ProblemInfo;
+  author: User;
+  created: string;
+  language: Language;
+  verdict: string;
+  testsPassed: number;
+  timeUsedMillis: number;
+  memoryUsedBytes: number;
+}
+
+

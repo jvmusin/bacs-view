@@ -1,5 +1,5 @@
 import axios, { AxiosPromise } from 'axios';
-import { ContestMeta, FullContestInfo, ProblemInfo } from '../typings';
+import { ContestMeta, FullContestInfo, ProblemInfo, Submission, Standing } from '../typings';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -26,12 +26,12 @@ class ContestApi {
     })
   }
 
-  static GetStandings(contestId) {
+  static GetStandings(contestId): Promise<Standing> {
     return axios.get(`contests/${contestId}/standings`)
       .then(response => response.data);
   }
 
-  static GetSubmissions(contestId) {
+  static GetSubmissions(contestId): Promise<Submission[]> {
     return axios.get(`contests/${contestId}/submissions/my`)
       .then(response => response.data);
   }

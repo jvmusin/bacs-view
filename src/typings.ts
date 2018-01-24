@@ -65,4 +65,19 @@ export type Submission = {
   memoryUsedBytes: number;
 }
 
+export type ContestantProblemResult = {
+  problemIndex: ProblemInfo['index'];
+  solved: boolean;
+  failTries: number;
+  penalty: number;
+}
 
+export type Standing = {
+  contestants: {
+    username: string,
+    place: 1,
+    results: ContestantProblemResult[];
+    solvedCount: number;
+    penalty: number;
+  }[];
+}

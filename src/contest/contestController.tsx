@@ -136,7 +136,7 @@ export default class ContestController extends React.Component<IContestControlle
         <Route
           exact
           path={current + 'standing'}
-          render={(props) => <div>Представь что это монитор на котором ты выигрываешь!</div>} />
+          render={(props) => <Standing problems={problems} standing={this.state.standing} /> } />
       </Switch>
     </div>
   }

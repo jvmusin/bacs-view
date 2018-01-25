@@ -10,19 +10,25 @@ import Paper from 'material-ui/Paper';
 
 interface ISubmitProps {
   submissions: Submission[];
+  isAdmin?: boolean;
 }
-
 
 const toMB = (byte) => Math.floor(byte / (1024 * 1024));
 const toSeconds = (ms) => Math.floor(ms / 1000);
 
-const Submits = ({ submissions }: ISubmitProps) => {
+const Submits = ({ submissions, isAdmin }: ISubmitProps) => {
   return (
     <Paper>
       <Table>
         <TableHead>
           <TableRow>
+            {
+              isAdmin
+              &&
+              <TableCell> Id посылки </TableCell>
+            }
             <TableCell> Имя задачи </TableCell>
+            <TableCell> Индекс </TableCell>
             <TableCell> Результат  </TableCell>
             <TableCell> Язык решения </TableCell>
             <TableCell> Кол-во прошедших тестов </TableCell>
@@ -35,15 +41,21 @@ const Submits = ({ submissions }: ISubmitProps) => {
             submissions
               .map((submission, index) => (
                 <TableRow key={submission.id}>
+                  {
+                    isAdmin
+                    &&
+                    <TableCell> {submission.id} </TableCell>
+                  }
                   <TableCell>{submission.problem.name}</TableCell>
+                  <TableCell>{submission.problem.index}</TableCell>
                   <TableCell>{submission.verdict}</TableCell>
                   <TableCell>{submission.language}</TableCell>
                   <TableCell>{submission.testsPassed}</TableCell>
                   <TableCell>
                     {toMB(submission.memoryUsedBytes)} из {toMB(submission.problem.memoryLimitBytes)} MB
                       <br />
-                    {toSeconds(submission.timeUsedMillis)} из {toSeconds(submission.problem.timeLimitMillis)} сек.
-                    </TableCell>
+                    {submission.timeUsedMillis} мс из {toSeconds(submission.problem.timeLimitMillis)} сек.
+                  </TableCell>
                 </TableRow>
               ))
           }

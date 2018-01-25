@@ -41,12 +41,14 @@ const App = (props: IAppProps) => (
   <Theme>
     <Auth>
       <div className={props.classes.main}>
-        <Header />
         <Router>
-          <Paper className={props.classes.contestListWrapper}>
-            <Route path='/' exact component={ContestList} />
-            <Route path='/contest/:contestId/' component={ContestController} />
-          </Paper>
+          <>
+            <Header />
+            <Paper className={props.classes.contestListWrapper}>
+              <Route path='/' exact component={ContestList} />
+              <Route path='/contest/:contestId/' component={ContestController} />
+            </Paper>
+          </>
         </Router>
       </div>
     </Auth>

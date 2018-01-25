@@ -69,10 +69,10 @@ export type ContestantProblemResult = {
   problemIndex: ProblemInfo['index'];
   solved: boolean;
   failTries: number;
-  penalty: number;
+  solvedAt: number;
 }
 
-export type Standing = {
+export type Standings = {
   contestants: {
     username: string,
     place: 1,

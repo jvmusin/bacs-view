@@ -1,5 +1,5 @@
 import axios, { AxiosPromise } from 'axios';
-import { ContestMeta, FullContestInfo, ProblemInfo, Submission, Standing } from '../typings';
+import { ContestMeta, FullContestInfo, ProblemInfo, Submission, Standings } from '../typings';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ class ContestApi {
     })
   }
 
-  static GetStandings(contestId): Promise<Standing> {
+  static GetStandings(contestId): Promise<Standings> {
     return axios.get(`contests/${contestId}/standings`)
       .then(response => response.data);
   }

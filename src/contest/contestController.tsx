@@ -8,7 +8,8 @@ import { ContestMeta, ProblemInfo, FullContestInfo, Submission } from '../typing
 import ContestApi from '../api/contestApi';
 import SubmitForm from './submitForm';
 import Submits from './submits';
-import Standing from './standing';
+import Standings from './standings';
+import AuthService from '../auth/authService';
 
 interface IContestControllerProps {
   match: match<any>;
@@ -28,22 +29,29 @@ export type Tab = {
   pathTo: string;
 }
 
+enum PagePath {
+  Problems = 'problems',
+  Standings = 'standings',
+  Submits = 'submits',
+  Submit = 'submit',
+}
+
 const tabs: Tab[] = [
   {
     name: 'Задачи',
-    pathTo: 'problems'
+    pathTo: PagePath.Problems
   },
   {
     name: 'Монитор',
-    pathTo: 'standing'
+    pathTo: PagePath.Standings
   },
   {
     name: 'Отправка',
-    pathTo: 'submit'
+    pathTo: PagePath.Submit
   },
   {
     name: 'Посылки',
-    pathTo: 'submits'
+    pathTo: PagePath.Submits
   },
 ];
 
@@ -64,8 +72,8 @@ export default class ContestController extends React.Component<IContestControlle
     this.fetchBypageName = (pageName) => {
       pageName = pageName || this.state.currentTab;
       switch(pageName) {
-        case 'submits': return this.fetchSubmits();
-        case 'standing': return this.fetchStanding();
+        case PagePath.Submits: return this.fetchSubmits();
+        case PagePath.Standings: return this.fetchStanding();
       }
     }
   }
@@ -101,6 +109,7 @@ export default class ContestController extends React.Component<IContestControlle
   componentDidMount() {
     this.fetchContestInfo()
       .then(() => this.fetchBypageName());
+    
   }
 
   render() {
@@ -108,7 +117,8 @@ export default class ContestController extends React.Component<IContestControlle
     const { currentTab, contestInfo } = this.state;
     const problems = contestInfo && contestInfo.problems || [];
     const current = match.url + '/';
-    const toProblems = current + 'problems';
+    const toProblems = current + PagePath.Problems;
+    const isAdmin = AuthService.IsAdmin();
     return <div>
       <div>
         <ContestMenu
@@ -127,16 +137,16 @@ export default class ContestController extends React.Component<IContestControlle
           </Paper>} />
         <Route
           exact
-          path={current + 'submit'}
+          path={current + PagePath.Submit}
           render={(props) => <SubmitForm contestId={contestInfo && contestInfo.meta.id} problems={problems} />} />
         <Route
           exact
-          path={current + 'submits'}
-          render={(props) => <Submits submissions={this.state.submits} />} />
+          path={current + PagePath.Submits}
+          render={(props) => <Submits isAdmin={isAdmin} submissions={this.state.submits} />} />
         <Route
           exact
-          path={current + 'standing'}
-          render={(props) => <Standing problems={problems} standing={this.state.standing} /> } />
+          path={current + PagePath.Standings}
+          render={(props) => <Standings problems={problems} standing={this.state.standing} /> } />
       </Switch>
     </div>
   }

@@ -6,19 +6,25 @@ import TableBody from 'material-ui/Table/TableBody';
 import TableHead from 'material-ui/Table/TableHead';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
-import { Standing, ProblemInfo } from '../typings';
+import { Standings, ProblemInfo } from '../typings';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
 import { StandardProps } from 'material-ui';
 
 
 interface IStandingsProps {
-  standing: Standing;
+  standing: Standings;
   problems: ProblemInfo[];
   classes?: any;
 }
 
-const Standing = (props: IStandingsProps) => {
+const formatMinutes = (mins) => {
+  const minutes = mins / 60 | 0;
+  const hour = mins % 60;
+  return hour ? hour+':' : '' + minutes;
+}
+
+const Standings = (props: IStandingsProps) => {
   const { standing, problems, classes } = props;
   const contestants = standing && standing.contestants || [];
   return (
@@ -55,14 +61,14 @@ const Standing = (props: IStandingsProps) => {
                           &&
                           <>
                           <div>{result.failTries}</div>
-                          <div>{result.penalty}</div>
+                          <div>{formatMinutes(result.solvedAt)}</div>
                           </>
                         }
                       </TableCell>
                     })
                   }
                   <TableCell>{contestant.solvedCount}</TableCell>
-                  <TableCell>{contestant.penalty}</TableCell>
+                  <TableCell>{formatMinutes(contestant.penalty)}</TableCell>
                 </TableRow>
               ))
           }
@@ -81,4 +87,4 @@ const styles: StyleRules = {
   }
 }
 
-export default withStyles(styles)(Standing);
+export default withStyles(styles)(Standings);

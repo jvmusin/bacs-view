@@ -24,7 +24,7 @@ const formatDate = (date: Date) => [
   date.getFullYear() !== new Date().getFullYear() ? date.getFullYear() : null
 ].filter(l => l).join(' ');
 
-const formatTime = (date: Date) => date.getHours() + ':' + padToTwoDigit(date.getMinutes());
+export const formatTime = (date: Date) => date.getHours() + ':' + padToTwoDigit(date.getMinutes());
 
 const formatDateWithTime = (date: Date) => formatDate(date) + ' в ' + formatTime(date);
 
@@ -37,7 +37,9 @@ export enum TimeDiffType {
 }
 
 export const getDateDiff = (from: Date, to: Date, diffType = TimeDiffType.Day): number => {
-  return (from.getTime() - to.getTime()) / diffType | 0;
+  return Math.floor(
+    (from.getTime() - to.getTime()) / diffType
+  );
 }
 
 

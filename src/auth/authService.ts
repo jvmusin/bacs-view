@@ -1,5 +1,5 @@
 import AuthApi from '../api/authApi';
-import { AuthState, SessionInfo } from '../typings';
+import { AuthState, SessionInfo, UserRole } from '../typings';
 
 type credentials = {
   username: string;
@@ -74,5 +74,9 @@ export default class AuthService {
 
   static Logout() {
     clearCookieParam(authCookieJWT);
+  }
+
+  static IsAdmin(): boolean {
+    return this.GetSessionInfo().authorities.includes(UserRole.Admin);
   }
 }

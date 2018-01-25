@@ -3,6 +3,7 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import TagFacesIcon from 'material-ui-icons/TagFaces';
 import ExitToApp from 'material-ui-icons/ExitToApp';
+import Home from 'material-ui-icons/Home';
 import IconButton from 'material-ui/IconButton';
 import AppBar from 'material-ui/AppBar';
 import { SessionInfo } from '../typings';
@@ -11,6 +12,7 @@ import { withStyles, StyleRules } from 'material-ui/styles';
 import { ClassNameMap } from 'material-ui/styles/withStyles';
 import Popover from 'material-ui/Popover';
 import List, { ListItem, ListItemText, ListSubheader } from 'material-ui/List';
+import { Link } from 'react-router-dom';
 
 interface IHeaderState {
   sessionInfo: SessionInfo;
@@ -56,6 +58,11 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     const { sessionInfo } = this.state;
     return <AppBar position='static' color='primary'>
       <Toolbar >
+        <Link to='/'>
+          <IconButton color='secondary'>
+            <Home className={classes.iconSize} />
+          </IconButton>
+        </Link>
         <Typography className={classes.flex} type='title' color='inherit'>
           <span>Welcome!</span>
         </Typography>

@@ -18,15 +18,25 @@ interface IHeaderState {
   sessionInfo: SessionInfo;
 }
 
-type ClassKey = 'iconSize' | 'flex';
+type ClassKey = 'headerIcon' | 'homeGroup' | 'homeLink' | 'homeTitle' | 'homeTitleWrapper';
 
 const styles: StyleRules<ClassKey> = {
-  iconSize: {
+  headerIcon: {
     fontSize: '2.4rem',
   },
-  flex: {
+  homeGroup: {
     flex: 1,
-  }
+  },
+  homeLink: {
+    cursor: 'pointer',
+  },
+  homeTitle: {
+    color: 'white',
+  },
+  homeTitleWrapper: {
+    display:'inline-block',
+    verticalAlign: 'middle',
+  },
 };
 
 interface IHeaderProps {
@@ -58,14 +68,16 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     const { sessionInfo } = this.state;
     return <AppBar position='static' color='primary'>
       <Toolbar >
-        <Link to='/'>
-          <IconButton color='secondary'>
-            <Home className={classes.iconSize} />
-          </IconButton>
-        </Link>
-        <Typography className={classes.flex} type='title' color='inherit'>
-          <span>Welcome!</span>
-        </Typography>
+        <div className={classes.homeGroup}>
+          <Link className={classes.homeLink} to='/'>
+            <IconButton color='secondary'>
+              <Home className={classes.headerIcon} />
+            </IconButton>
+            <Typography className={classes.homeTitleWrapper} type='title'>
+              <span className={classes.homeTitle}>Welcome!</span>
+            </Typography>
+          </Link>
+        </div>
 
         <Typography type='title' color='inherit'>
           <span>
@@ -78,7 +90,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         <IconButton
           onClick={this.logout}
           color='secondary'>
-          <ExitToApp className={classes.iconSize} />
+          <ExitToApp className={classes.headerIcon} />
         </IconButton>
       </Toolbar>
     </AppBar>

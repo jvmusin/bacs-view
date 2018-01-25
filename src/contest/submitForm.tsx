@@ -23,13 +23,13 @@ interface ISubmitState {
 }
 
 const avaliableLanguages: Language[] = [
-    'C',
-    'CPP',
-    'Delphi',
-    'FPC',
-    'Python2',
-    'Python3',
-    'Mono',
+  'C',
+  'CPP',
+  'Delphi',
+  'FPC',
+  'Python2',
+  'Python3',
+  'Mono',
 ];
 
 class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
@@ -49,7 +49,7 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
   }
 
   submit = () => {
-    ContestApi.SubmitSolution(     
+    ContestApi.SubmitSolution(
       this.state.problemIndex,
       this.state.solution,
       this.state.language,
@@ -62,12 +62,12 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
     const { problems, classes } = this.props;
     const { language, problemIndex, solution } = this.state;
     return (
-      <Paper>
-        <FormGroup className={classes.wrapper}>
+      <Paper className={classes.wrapper}>
+        <FormGroup className={classes.formGroup}>
           <FormControl>
             <InputLabel htmlFor='problem-index'>Задача</InputLabel>
             <Select
-              autoWidth
+              autoFocus
               value={this.state.problemIndex}
               onChange={this.handleChange}
               input={<Input name='problemIndex' id='problem-index' />}
@@ -85,7 +85,6 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
           <FormControl>
             <InputLabel htmlFor='language'>Язык</InputLabel>
             <Select
-              autoWidth
               value={this.state.language}
               onChange={this.handleChange}
               input={<Input name='language' id='language' />}
@@ -100,22 +99,24 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
               }
             </Select>
           </FormControl>
-          <textarea
-            name='solution'
-            value={this.state.solution}
-            onChange={this.handleChange}
-            placeholder='print(1)'
-          />
-          <Button disabled={!(
-            this.state.solution &&
-            this.state.language &&
-            this.state.problemIndex
-          )}
-          onClick={this.submit} 
-          >
-            Отправить решение
-        </Button>
         </FormGroup>
+        <textarea
+          className={classes.codePlace}
+          name='solution'
+          rows={20}
+          value={this.state.solution}
+          onChange={this.handleChange}
+          placeholder='print(1)'
+        />
+        <Button disabled={!(
+          this.state.solution &&
+          this.state.language &&
+          this.state.problemIndex
+        )}
+          className={classes.submitButton}
+          onClick={this.submit}>
+          Отправить решение
+        </Button>
       </Paper>
     );
   }
@@ -123,11 +124,25 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
 
 const styles: StyleRules = {
   wrapper: {
-    padding: '15px 10px',
+    padding: '15px 10px',    
     '&>*': {
       marginBottom: 15,
     }
   },
+  formGroup: {   
+    maxWidth: '20%',
+    minWidth: 70,
+    '&>*': {
+      marginBottom: 15,
+    }
+  },
+  codePlace: {
+    maxWidth: '100%',
+    width: '100%',
+  },
+  submitButton: {
+    width: '100%',
+  }
 }
 
 export default withStyles(styles)<ISubmitProps>(SubmitForm as any);

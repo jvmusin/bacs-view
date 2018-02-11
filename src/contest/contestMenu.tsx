@@ -7,10 +7,11 @@ interface IContestMenuProps {
   handleTabChange: (_, value) => void;
   tabs: TabType[];
   currentTab: TabType['pathTo'];
+  isAdmin?: boolean;
 }
 
 const ContestMenu = (props: IContestMenuProps) => {
-  const { currentTab, handleTabChange, tabs } = props;
+  const { currentTab, handleTabChange, tabs, isAdmin } = props;
   return (
     <Paper>
       <Tabs
@@ -20,11 +21,12 @@ const ContestMenu = (props: IContestMenuProps) => {
         textColor='primary'
       >
         {
-          tabs.map(linkInfo => <Tab
-            key={linkInfo.pathTo}
-            label={linkInfo.name}
-            value={linkInfo.pathTo}
-          />)
+          tabs.filter(tab => !tab.needAdminsRight || isAdmin)
+            .map(linkInfo => <Tab
+              key={linkInfo.pathTo}
+              label={linkInfo.name}
+              value={linkInfo.pathTo}
+            />)
         }
       </Tabs>
     </Paper>

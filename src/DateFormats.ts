@@ -24,7 +24,7 @@ const formatDate = (date: Date) => [
   date.getFullYear() !== new Date().getFullYear() ? date.getFullYear() : null
 ].filter(l => l).join(' ');
 
-export const formatTime = (date: Date) => date.getHours() + ':' + padToTwoDigit(date.getMinutes());
+export const formatTime = (date: Date) => padToTwoDigit(date.getHours()) + ':' + padToTwoDigit(date.getMinutes());
 
 const formatDateWithTime = (date: Date) => formatDate(date) + ' в ' + formatTime(date);
 

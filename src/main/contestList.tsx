@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContestMeta } from '../typings';
+import { ContestInfo } from '../typings';
 import ContestCard from './contestCard';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
@@ -9,7 +9,7 @@ import Typography from 'material-ui/Typography/';
 import Update from 'material-ui-icons/Update';
 
 interface IContestListState {
-  contests: ContestMeta[];
+  contests: ContestInfo[];
   expandedContestIndx: number;
 }
 

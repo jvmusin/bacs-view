@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProblemInfo, ContestMeta, Language } from '../typings';
+import { ProblemInfo, ContestInfo, Language } from '../typings';
 import Select from 'material-ui/Select';
 import Button from 'material-ui/Button';
 import Input, { InputLabel } from 'material-ui/Input';
@@ -9,35 +9,28 @@ import Paper from 'material-ui/Paper';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
 import ContestApi from '../api/contestApi';
+import NativeSelect from '../common/select';
 
 interface ISubmitProps {
-  contestId: ContestMeta['id'],
+  contestId: ContestInfo['id'],
   problems: ProblemInfo[];
   classes?: any;
 }
 
 interface ISubmitState {
   problemIndex: ProblemInfo['index'];
-  language: string;
+  language: Language;
   solution: string;
 }
 
-const avaliableLanguages: Language[] = [
-  'C',
-  'CPP',
-  'Delphi',
-  'FPC',
-  'Python2',
-  'Python3',
-  'Mono',
-];
+const avaliableLanguages: string[] = Object.keys(Language).map(key => Language[key]);
 
 class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
   constructor(props) {
     super(props);
     this.state = {
       problemIndex: '',
-      language: '',
+      language: null,
       solution: '',
     };
   }
@@ -49,6 +42,7 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
   }
 
   submit = () => {
+    const unFormattedLanguage = Language.keyOf(this.state.language);
     ContestApi.SubmitSolution(
       this.state.problemIndex,
       this.state.solution,
@@ -64,41 +58,20 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
     return (
       <Paper className={classes.wrapper}>
         <FormGroup className={classes.formGroup}>
-          <FormControl>
-            <InputLabel htmlFor='problem-index'>Задача</InputLabel>
-            <Select
-              autoFocus
-              value={this.state.problemIndex}
-              onChange={this.handleChange}
-              input={<Input name='problemIndex' id='problem-index' />}
-            >
-              <MenuItem value=''>
-                <em>None</em>
-              </MenuItem>
-              {
-                problems.map(problem => (
-                  <MenuItem key={problem.index} value={problem.index}>{problem.name}</MenuItem>
-                ))
-              }
-            </Select>
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor='language'>Язык</InputLabel>
-            <Select
-              value={this.state.language}
-              onChange={this.handleChange}
-              input={<Input name='language' id='language' />}
-            >
-              <MenuItem value=''>
-                <em>None</em>
-              </MenuItem>
-              {
-                avaliableLanguages.map(language => (
-                  <MenuItem key={language} value={language}>{language}</MenuItem>
-                ))
-              }
-            </Select>
-          </FormControl>
+          <NativeSelect
+            label={'Задача'}
+            name={'problemIndex'}
+            onChange={this.handleChange}
+            selectedValue={this.state.problemIndex}
+            values={problems.map(p => p.name)}
+          />
+          <NativeSelect
+            label={'Язык'}
+            name={'language'}
+            onChange={this.handleChange}
+            selectedValue={this.state.language}
+            values={avaliableLanguages}
+          />
         </FormGroup>
         <textarea
           className={classes.codePlace}
@@ -124,12 +97,12 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
 
 const styles: StyleRules = {
   wrapper: {
-    padding: '15px 10px',    
+    padding: '15px 10px',
     '&>*': {
       marginBottom: 15,
     }
   },
-  formGroup: {   
+  formGroup: {
     maxWidth: '20%',
     minWidth: 70,
     '&>*': {

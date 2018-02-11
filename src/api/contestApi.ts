@@ -1,5 +1,5 @@
 import axios, { AxiosPromise } from 'axios';
-import { ContestMeta, FullContestInfo, ProblemInfo, Submission, Standings } from '../typings';
+import { ContestInfo, ProblemInfo, Submission, Standings } from '../typings';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -9,20 +9,22 @@ axios.defaults.baseURL = 'https://bacs007.herokuapp.com/';
 axios.defaults.headers = defaultHeaders;
 
 class ContestApi {
-  static GetContests(): Promise<ContestMeta[]> {
+  static GetContests(): Promise<ContestInfo[]> {
     return axios.get('contests')
       .then(response => response.data);
   }
 
-  static GetContestInfo(id: ContestMeta['id']): Promise<FullContestInfo> {
+  static GetContestInfo(id: ContestInfo['id']): Promise<ContestInfo> {
     return axios.get(`contests/${id}`)
       .then(response => response.data);
   }
 
-  static SubmitSolution(problemIndex: ProblemInfo['index'], solution: string, language: string, contestId: ContestMeta['id']) {
-    return axios.post(`contests/${contestId}/problems/${problemIndex}`, {
+  static SubmitSolution(problemIndex: ProblemInfo['index'], solution: string, language: string, contestId: ContestInfo['id']) {
+    return axios.post(`/submissions`, {
       language,
       solution,
+      problemIndex,
+      contestId
     })
   }
 
@@ -31,8 +33,17 @@ class ContestApi {
       .then(response => response.data);
   }
 
-  static GetSubmissions(contestId): Promise<Submission[]> {
-    return axios.get(`contests/${contestId}/submissions/my`)
+  static GetUserSubmissions(contestId, author): Promise<Submission[]> {
+    return axios.get(`submissions/${contestId}`, {
+      params: {
+        author,
+      }
+    })
+      .then(response => response.data);
+  }
+
+  static GetAllSubmissions(contestId): Promise<Submission[]> {
+    return axios.get(`contests/${contestId}/submissions/`)
       .then(response => response.data);
   }
 }

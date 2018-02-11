@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ProblemInfo, ContestMeta } from '../typings';
+import { ProblemInfo, ContestInfo } from '../typings';
 import ContestApi from '../api/contestApi';
 import ProblemTable from './problemTable';
 
 interface IProblemTableControllerProps {
-  contestId: ContestMeta['id'];
+  contestId: ContestInfo['id'];
 }
 
 interface IProblemTableControllerState {

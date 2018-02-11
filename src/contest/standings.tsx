@@ -26,7 +26,7 @@ const formatMinutes = (mins) => {
 
 const Standings = (props: IStandingsProps) => {
   const { standing, problems, classes } = props;
-  const contestants = standing && standing.contestants || [];
+  const rows = standing && standing.rows || [];
   return (
     <Paper>
       <Table>
@@ -43,15 +43,15 @@ const Standings = (props: IStandingsProps) => {
         </TableHead>
         <TableBody>
           {
-            contestants &&
-            contestants
-              .map((contestant, index) => (
+            rows &&
+            rows
+              .map((row, index) => (
                 <TableRow key={index}>
-                  <TableCell>{contestant.place}</TableCell>
-                  <TableCell>{contestant.username}</TableCell>
+                  <TableCell>{row.place}</TableCell>
+                  <TableCell>{row.author.username}</TableCell>
                   {
                     problems.map(problem => {
-                      const result = contestant.results.find(r => r.problemIndex === problem.index);
+                      const result = row.results.find(r => r.problemIndex === problem.index);
                       // tslint:disable-next-line:triple-equals
                       const isNotTouched = !result || (!result.solved && result.failTries == 0);
                       const className = isNotTouched ? '' : result.solved ? classes.success : classes.fail;
@@ -67,8 +67,8 @@ const Standings = (props: IStandingsProps) => {
                       </TableCell>
                     })
                   }
-                  <TableCell>{contestant.solvedCount}</TableCell>
-                  <TableCell>{formatMinutes(contestant.penalty)}</TableCell>
+                  <TableCell>{row.solvedCount}</TableCell>
+                  <TableCell>{formatMinutes(row.penalty)}</TableCell>
                 </TableRow>
               ))
           }

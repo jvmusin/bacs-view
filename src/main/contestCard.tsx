@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ContestMeta } from '../typings';
-import ProblemTableController from '../problem/problemTableController';
+import { ContestInfo, ProblemInfo, Enhance } from '../typings';
+import ProblemTable from '../problem/problemTable';
 import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '../DateFormats';
 
 import ExpansionPanel, {
@@ -9,13 +9,12 @@ import ExpansionPanel, {
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-import { StyleRules, withStyles } from 'material-ui/styles';
 
 import { Link } from 'react-router-dom';
 import { match } from 'react-router';
 
 interface IContestCardProps {
-  contest: ContestMeta;
+  contest: ContestInfo;
   isExpanded: boolean;
   onExpand: (event, expand?) => void;
   classes?: any;
@@ -27,10 +26,6 @@ function formatContinuingContestTime(now: Date, finish: Date) {
   const min = minDiff % 60;
   return (hour ? hour : '') + 'ч. ' + padToTwoDigit(min) + 'мин.';
 }
-
-const styles: StyleRules = {
-
-};
 
 const ContestCard = (props: IContestCardProps) => {
   const { contest, isExpanded, onExpand, classes } = props;
@@ -78,8 +73,8 @@ const ContestCard = (props: IContestCardProps) => {
             </Link>
           }
           <div>
-            <ProblemTableController
-              contestId={contest.id} />
+            <ProblemTable
+              problems={contest.problems} />
           </div>
         </div>
       </ExpansionPanelDetails>
@@ -87,4 +82,4 @@ const ContestCard = (props: IContestCardProps) => {
   )
 };
 
-export default withStyles(styles)(ContestCard);
+export default ContestCard;

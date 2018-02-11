@@ -1,14 +1,11 @@
+import { Verdict } from './contest/verdict';
 
-export type ContestMeta = {
+export type ContestInfo = {
   id: number;
   name: string;
   startTime: string;
   finishTime: string;
-};
-
-export type FullContestInfo = {
-  meta: ContestMeta;
-  problems: ProblemInfo[]
+  problems: ProblemInfo[];
 };
 
 export type ProblemInfo = {
@@ -32,37 +29,47 @@ export enum UserRole {
 
 export type SessionInfo = {
   userid: number,
-  authorities: UserRole[],
+  roles: UserRole[],
   sub: string,
   exp?: number,
 }
 
 export type User = {
-  id: number;
   username: string;
 };
 
-export type Language =
-  'C' |
-  'CPP' |
-  'Delphi' |
-  'FPC' |
-  'Python2' |
-  'Python3' |
-  'Mono'
-  ;
+export enum Language {
+  C = 'C',
+  CPP = 'C++',
+  Delphi = 'Delphi',
+  FPC = 'Free Pascal',
+  Python2 = 'Python 2',
+  Python3 = 'Python 3',
+  Mono = 'C# Mono',
+}
+
+export namespace Language {
+  export function keyOf(language: Language) {
+    return Object.keys(Language).find(k => Language[k] === language);
+  }
+}
 
 export type Submission = {
   id: number;
-  contest: ContestMeta;
   problem: ProblemInfo;
   author: User;
   created: string;
   language: Language;
-  verdict: string;
-  testsPassed: number;
-  timeUsedMillis: number;
-  memoryUsedBytes: number;
+  solution: string;
+  result: SubmissionResult;
+}
+
+export type SubmissionResult = {
+  buildInfo?: string;
+  verdict: Verdict;
+  testsPassed?: number;
+  timeUsed: number;
+  memoryUsed: number;
 }
 
 export type ContestantProblemResult = {
@@ -72,12 +79,21 @@ export type ContestantProblemResult = {
   solvedAt: number;
 }
 
+export type StandingsRow = {
+  author: User;
+  place: number,
+  solvedCount: number;
+  penalty: number;
+  results: ContestantProblemResult[];
+};
+
 export type Standings = {
-  contestants: {
-    username: string,
-    place: 1,
-    results: ContestantProblemResult[];
-    solvedCount: number;
-    penalty: number;
-  }[];
+  rows: StandingsRow[];
+  contest: ContestInfo;
 }
+
+export type Enhance<T> = {
+  title: string;
+  width?: number;
+  renderCell: (submission: T) => React.ReactNode;
+};

@@ -15,6 +15,7 @@ import Theme from './theme';
 
 import ContestList from '../main/contestList';
 import ContestController from '../contest/contestController';
+import ContestBuilder from '../admin/contestBuilder';
 
 type classes = {
   main: string,
@@ -46,6 +47,7 @@ const App = (props: IAppProps) => (
             <Header />
             <Paper className={props.classes.contestListWrapper}>
               <Route path='/' exact component={ContestList} />
+              <Route path='/admin/:contestId?' component={ContestBuilder} />
               <Route path='/contest/:contestId/' component={ContestController} />
             </Paper>
           </>

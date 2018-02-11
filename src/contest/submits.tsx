@@ -5,33 +5,45 @@ import TableCell from 'material-ui/Table/TableCell';
 import TableBody from 'material-ui/Table/TableBody';
 import TableHead from 'material-ui/Table/TableHead';
 import TextField from 'material-ui/TextField';
-import { Submission } from '../typings';
+import { Submission, ProblemInfo, SubmissionResult, Enhance } from '../typings';
+import { Verdict } from './verdict';
 import Paper from 'material-ui/Paper';
+import { formatProblemName } from '../problem/problemTable';
 
 interface ISubmitProps {
   submissions: Submission[];
-  isAdmin?: boolean;
+  enhance?: Enhance<Submission>[];
+  withSorting?: boolean;
 }
 
 const toMB = (byte) => Math.floor(byte / (1024 * 1024));
 const toSeconds = (ms) => Math.floor(ms / 1000);
 
-const Submits = ({ submissions, isAdmin }: ISubmitProps) => {
+const buildVerdictRow = (result: SubmissionResult) => {
+  const { verdict, testsPassed } = result;
+  const isAcc = verdict === Verdict.ACCEPTED;
+  const short = Verdict.short(verdict);
+  const rus = Verdict.rus(verdict);
+  const testsPassedStr = testsPassed || testsPassed === 0
+    ? ` тест ${testsPassed}`
+    : '';
+
+  return short + testsPassedStr;
+}
+
+const Submits = ({ submissions, enhance }: ISubmitProps) => {
   return (
     <Paper>
       <Table>
         <TableHead>
           <TableRow>
             {
-              isAdmin
-              &&
-              <TableCell> Id посылки </TableCell>
+              enhance &&
+              enhance.map(add => <TableCell>{add.title}</TableCell>)
             }
             <TableCell> Имя задачи </TableCell>
-            <TableCell> Индекс </TableCell>
             <TableCell> Результат  </TableCell>
             <TableCell> Язык решения </TableCell>
-            <TableCell> Кол-во прошедших тестов </TableCell>
             <TableCell> Потрачено </TableCell>
           </TableRow>
         </TableHead>
@@ -42,19 +54,20 @@ const Submits = ({ submissions, isAdmin }: ISubmitProps) => {
               .map((submission, index) => (
                 <TableRow key={submission.id}>
                   {
-                    isAdmin
-                    &&
-                    <TableCell> {submission.id} </TableCell>
+                    enhance &&
+                    enhance.map(add => <TableCell>{add.renderCell(submission)}</TableCell>)
                   }
-                  <TableCell>{submission.problem.name}</TableCell>
-                  <TableCell>{submission.problem.index}</TableCell>
-                  <TableCell>{submission.verdict}</TableCell>
-                  <TableCell>{submission.language}</TableCell>
-                  <TableCell>{submission.testsPassed}</TableCell>
+                  <TableCell>{formatProblemName(submission.problem)}</TableCell>
                   <TableCell>
-                    {toMB(submission.memoryUsedBytes)} из {toMB(submission.problem.memoryLimitBytes)} MB
+                    {
+                      buildVerdictRow(submission.result)
+                    }
+                  </TableCell>
+                  <TableCell>{submission.language}</TableCell>
+                  <TableCell>
+                    {toMB(submission.result.memoryUsed)} из {toMB(submission.problem.memoryLimitBytes)} MB
                       <br />
-                    {submission.timeUsedMillis} мс из {toSeconds(submission.problem.timeLimitMillis)} сек.
+                    {submission.result.timeUsed} мс из {toSeconds(submission.problem.timeLimitMillis)} сек.
                   </TableCell>
                 </TableRow>
               ))

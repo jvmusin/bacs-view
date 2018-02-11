@@ -57,18 +57,22 @@ export default class AuthService {
   }
 
   static CheckAuth(): AuthState {
-    const token = getFromCookies(authCookieJWT);
-    const info = parseJwt(token);
-    const expiresIn = info && info.exp
-      ? new Date(info.exp * 1000)
-      : null;
+    try {
+      const token = getFromCookies(authCookieJWT);
+      const info = parseJwt(token);
+      const expiresIn = info && info.exp
+        ? new Date(info.exp * 1000)
+        : null;
 
-    const now = new Date();
-    if (expiresIn && now < expiresIn) {
-      AuthApi.SetJWT(authHeaderName, token);
-      return AuthState.Success;
+      const now = new Date();
+      if (expiresIn && now < expiresIn) {
+        AuthApi.SetJWT(authHeaderName, token);
+        return AuthState.Success;
+      }
     }
-
+    catch (e) {
+      console.log(e);
+    }
     return AuthState.None;
   }
 
@@ -76,7 +80,9 @@ export default class AuthService {
     clearCookieParam(authCookieJWT);
   }
 
-  static IsAdmin(): boolean {
-    return this.GetSessionInfo().authorities.includes(UserRole.Admin);
+  static IsAdmin(sessionInfo?: SessionInfo): boolean {
+    return (
+      sessionInfo || this.GetSessionInfo()
+    ).roles.includes(UserRole.Admin);
   }
 }

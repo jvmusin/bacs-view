@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProblemInfo, ContestInfo, Language } from '../typings';
+import { ContestProblem, ContestInfo, Language } from '../typings';
 import Select from 'material-ui/Select';
 import Button from 'material-ui/Button';
 import Input, { InputLabel } from 'material-ui/Input';
@@ -13,12 +13,12 @@ import NativeSelect from '../common/select';
 
 interface ISubmitProps {
   contestId: ContestInfo['id'],
-  problems: ProblemInfo[];
+  problems: ContestProblem[];
   classes?: any;
 }
 
 interface ISubmitState {
-  problemIndex: ProblemInfo['index'];
+  problemIndex: ContestProblem['index'];
   language: Language;
   solution: string;
 }

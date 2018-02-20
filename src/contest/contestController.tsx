@@ -4,7 +4,7 @@ import { Route, match, Redirect, Switch } from 'react-router';
 import { History, Location } from 'history';
 import ContestMenu from './contestMenu';
 import ProblemTable from '../problem/problemTable';
-import { ContestInfo, ProblemInfo, Submission, SessionInfo } from '../typings';
+import { ContestInfo, ContestProblem, Submission, SessionInfo } from '../typings';
 import ContestApi from '../api/contestApi';
 import SubmitForm from './submitForm';
 import Submits from './submits';

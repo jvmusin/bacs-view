@@ -5,7 +5,7 @@ import TableCell from 'material-ui/Table/TableCell';
 import TableBody from 'material-ui/Table/TableBody';
 import TableHead from 'material-ui/Table/TableHead';
 import TextField from 'material-ui/TextField';
-import { Submission, ProblemInfo, SubmissionResult, Enhance } from '../typings';
+import { Submission, ContestProblem, SubmissionResult, Enhance } from '../typings';
 import { Verdict } from './verdict';
 import Paper from 'material-ui/Paper';
 import { formatProblemName } from '../problem/problemTable';

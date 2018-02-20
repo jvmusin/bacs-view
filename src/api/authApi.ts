@@ -4,7 +4,7 @@ const clearAxios = axios.create();
 
 class AuthApi {
   static SignUp(username, password): AxiosPromise<any> {
-    return axios.post('/auth', { username, password });
+    return axios.post('/auth/register', { username, password });
   }
 
   static Auth(username, password): AxiosPromise<any> {

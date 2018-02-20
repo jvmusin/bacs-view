@@ -3,7 +3,7 @@ import Submits from './submits';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
-import { Submission, ProblemInfo, Enhance } from '../typings';
+import { Submission, ContestProblem, Enhance } from '../typings';
 import { FormGroup } from 'material-ui/Form'
 import NativeSelect from '../common/select';
 import { StyleRules, withStyles } from 'material-ui/styles';
@@ -11,7 +11,7 @@ import { StyleRules, withStyles } from 'material-ui/styles';
 
 interface IAllSubmitsProps {
   submissions: Submission[];
-  problems: ProblemInfo[];
+  problems: ContestProblem[];
   classes?: any;
 }
 

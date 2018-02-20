@@ -1,97 +1,91 @@
-import * as React from 'react';
-import AuthService from '../auth/authService';
-import Paper from 'material-ui/Paper/Paper';
-import { FormGroup, FormControl } from 'material-ui/Form';
-import TextField from 'material-ui/TextField';
-import { StyleRules } from 'material-ui/styles';
-import withStyles from 'material-ui/styles/withStyles';
-import Typography from 'material-ui/Typography/Typography';
-import ContestApi from '../api/contestApi';
-import { ProblemInfo, ContestInfo, Enhance } from '../typings';
-import { formatTime } from '../DateFormats';
-import ProblemTable from '../problem/problemTable';
-import Checkbox from 'material-ui/Checkbox';
-import Icon from 'material-ui/Icon';
-import IconButton from 'material-ui/IconButton';
 import AddIcon from 'material-ui-icons/Add';
 import DeleteIcon from 'material-ui-icons/Delete';
-import contestApi from '../api/contestApi';
+import Button from 'material-ui/Button';
+import Checkbox from 'material-ui/Checkbox';
+import { FormControl, FormControlLabel, FormGroup } from 'material-ui/Form';
+import Icon from 'material-ui/Icon';
+import IconButton from 'material-ui/IconButton';
+import Paper from 'material-ui/Paper/Paper';
+import { StyleRules } from 'material-ui/styles';
+import withStyles from 'material-ui/styles/withStyles';
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography/Typography';
+import * as React from 'react';
+import ContestInfoEditer from './ContestInfoEditor';
+import ContestApi from '../api/contestApi';
 import problemsApi from '../api/problemsApi';
+import AuthService from '../auth/authService';
+import { formatTime } from '../DateFormats';
+import ProblemTable from '../problem/problemTable';
+import {
+  ArchiveProblem,
+  ContestInfo,
+  ContestProblem,
+  Enhance
+  } from '../typings';
 
 interface IContestBuilderProps {
   classes?: any;
   match: any;
 }
-
+type FullProblemInfo = ArchiveProblem & ContestProblem;
 interface IContestBuilderState {
-  startDate: string;
-  endDate: string;
-  startTime: string;
-  endTime: string;
-  name: string;
-  contestProblems: ProblemInfo[];
-  allProblems: ProblemInfo[];
+  allProblems: ArchiveProblem[];
   includeExternal: boolean;
+  contestInfo: ContestInfo;
+  error: boolean;
 }
 
-const toIsoDate = (date: Date) => date.toISOString().substring(0, 10);
-
 class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuilderState> {
-  createEnhance = (onCheck): Enhance<ProblemInfo> => ({
-    title: '',
-    width: 80,
-    renderCell: (problem: ProblemInfo) => (
-      <IconButton>
-        <AddIcon />
-      </IconButton>
-    )
-  });
-
-  enhance = [{
-    title: '',
-    width: 50,
-    renderCell: (problem: ProblemInfo) => (
-      <IconButton>
-        <AddIcon />
-      </IconButton>
-    )
-  }];
-
-
+  indexes;
+  catch = (e) => console.log(e) || this.setState({ error: true })
   constructor(props) {
     super(props);
-    const now = toIsoDate(new Date());
+    const start = new Date();
+    const finish = new Date();
+    finish.setHours(start.getHours() + 5);
 
     this.state = {
-      startDate: now,
-      startTime: '12:00',
-      endDate: now,
-      endTime: '17:00',
-      name: '',
-      contestProblems: [],
+      contestInfo: {
+        startTime: start.toISOString(),
+        finishTime: finish.toISOString(),
+        name: '',
+        problems: [],
+        id: null,
+      },
       allProblems: [],
       includeExternal: false,
+      error: false,
     };
+    this.indexes = {};
+    this.handleProblemIndexChange = this.handleProblemIndexChange.bind(this);
   }
 
-  destructContestInfoToState = (contestInfo: ContestInfo): IContestBuilderState => {
-    const endDate = new Date(contestInfo.startTime);
-    const startDate = new Date(contestInfo.finishTime);
-    return {
-      contestProblems: contestInfo.problems,
-      name: contestInfo.name,
-      endDate: toIsoDate(endDate),
-      startDate: toIsoDate(startDate),
-      startTime: formatTime(startDate),
-      endTime: formatTime(endDate),
-    } as IContestBuilderState;
-  }
-
-  fetchContestInfo = (contestId) => {
+  fetchContestInfo = async (contestId) => {
     if (!contestId)
       return;
-    ContestApi.GetContestInfo(contestId)
-      .then(data => this.setState(this.destructContestInfoToState(data)));
+    const contestInfo = await ContestApi.GetContestInfo(contestId);
+    this.setState({
+      contestInfo
+    });
+    const problems = contestInfo && contestInfo.problems;
+    if (!problems)
+      return;
+    await this.patchProblems(problems);
+  }
+
+  private async patchProblems(problems: ContestProblem[]) {
+    const archiveProblems = await Promise.all(problems.map(problem => problemsApi.GetArchiveProblem(problem.contestId, problem.index)));
+    const updatedByArchiveIdsProblems = problems.map((p, index) => ({
+      ...p,
+      ...archiveProblems[index]
+    }));
+    this.setState(prevState => ({
+      contestInfo: {
+        ...prevState.contestInfo,
+        problems: updatedByArchiveIdsProblems,
+      }
+    }));
   }
 
   fetchAllProblems = () => {
@@ -111,12 +105,6 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
     );
   }
 
-  handleChange = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-  }
-
   handleCheckboxChange = (event) => {
     this.setState({
       [event.target.name]: event.target.checked
@@ -128,86 +116,90 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
       return null;
     }
     const { classes } = this.props;
-    const { endDate, endTime, startDate, startTime, contestProblems, allProblems, includeExternal } = this.state;
-    const contestProblemsNamesSet = new Set(contestProblems.map(p => p.name));
-    const otherProblems = allProblems.filter(p => contestProblemsNamesSet.has(p.name));
+    const { contestInfo, allProblems, includeExternal } = this.state;
+    const contestProblemsNamesSet = new Set(contestInfo.problems.map(p => p.name));
+    const otherProblems = allProblems.filter(p => !contestProblemsNamesSet.has(p.name));
     return (
       <Paper className={classes.container}>
-        <FormGroup className={classes.group}>
-          <Typography type='headline'>
-            Контест билдер, йоу!
-          </Typography>
-          <FormControl className={classes.nameForm}>
-            <TextField
-              onChange={this.handleChange}
-              name='name'
-              value={this.state.name}
-              label='Название контеста'
-            />
-          </FormControl>
-          <FormControl className={classes.form}>
-            <TextField
-              name='startDate'
-              type='date'
-              onChange={this.handleChange}
-              value={startDate}
-              label='Дата начала'
-            />
-            <TextField
-              autoFocus
-              name='startTime'
-              type='time'
-              onChange={this.handleChange}
-              value={startTime}
-              label='Время начала'
-            />
-          </FormControl>
-          <FormControl className={classes.form}>
-            <TextField
-              name='endDate'
-              type='date'
-              onChange={this.handleChange}
-              value={endDate}
-              label='Дата окончания'
-            />
-            <TextField
-              name='endTime'
-              type='time'
-              onChange={this.handleChange}
-              value={endTime}
-              label='Время окончания'
-            />
-          </FormControl>
-        </FormGroup>
+        <ContestInfoEditer />
         <div>
           <Typography type='subheading'>
             Задачи в контесте
-        </Typography>
-          <ProblemTable
-            problems={contestProblems}
-            enhance={this.enhance}
-          />
+          </Typography>
+            <ProblemTable
+              problems={contestInfo.problems}
+            />
         </div>
         <div>
           <Typography type='subheading'>
             Все задачи
           </Typography>
-          <Checkbox
-            checked={includeExternal}
-            onChange={this.handleCheckboxChange}
-            name='includeExternal'
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={includeExternal}
+                onChange={this.handleCheckboxChange}
+                name='includeExternal'
+              />
+            }
+            label='External'
           />
+          <Button onClick={this.fetchAllProblems}>
+            Загрузить все задачи (будет больно)
+          </Button>
           <ProblemTable
             problems={otherProblems}
-            enhance={this.enhance}
+            enhance={this.allProblemsEnhance}
+            withPaging
           />
         </div>
       </Paper>
     );
   }
-}
 
-const selectWidth = 170;
+  updateContest = async (contestInfo) => {
+    return ContestApi.EditContest(this.props.match.params.contestId, contestInfo);
+  }
+
+  handleAddProblem = (problem: ArchiveProblem) => () => {
+    const patchedProblem = {
+      ...problem,
+      index: this.indexes[problem.problemId.resourceProblemId],
+    }
+    const newProblems = [...this.state.contestInfo.problems, patchedProblem];
+    const newInfo = {
+      ...this.state.contestInfo,
+      problems: newProblems,
+    }
+    this.updateContest(newInfo)
+      .then(() => this.setState({ contestInfo: newInfo }))
+      .catch(this.catch);
+  }
+
+  handleProblemIndexChange(event) {
+    this.indexes[event.target.name] = event.target.value;
+    this.setState({});
+  }
+
+  allProblemsEnhance = [{
+    title: '',
+    width: 150,
+    renderCell: (problem: ArchiveProblem) => {
+      const index = this.indexes[problem.problemId.resourceProblemId];
+      return <>
+        <TextField
+          error={index === ''}
+          name={problem.problemId.resourceProblemId}
+          value={index}
+          onChange={this.handleProblemIndexChange}
+        />
+        <IconButton onClick={this.handleAddProblem(problem)} >
+          <AddIcon />
+        </IconButton>
+      </>
+    }
+  }];
+}
 
 const styles: StyleRules = {
   container: {
@@ -215,21 +207,6 @@ const styles: StyleRules = {
     paddingTop: 10,
     paddingBottom: 20,
   },
-  group: {
-    width: selectWidth * 2 + 20,
-    marginBottom: 30,
-  },
-  form: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    '& > div': {
-      width: selectWidth,
-    },
-    marginBottom: 10,
-  },
-  nameForm: {
-    marginBottom: 15,
-  }
 };
 
 export default withStyles(styles)<IContestBuilderProps>(ContestBuilder as any);

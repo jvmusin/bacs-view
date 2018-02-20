@@ -37,7 +37,7 @@ class ContestList extends React.Component<IContestListProps, IContestListState> 
     }
   }
 
-  fetchContests() {
+  fetchContests = () => {
     contestApi.GetContests()
       .then(contests => this.setState({ contests }));
   }

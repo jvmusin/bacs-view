@@ -6,7 +6,7 @@ import TableBody from 'material-ui/Table/TableBody';
 import TableHead from 'material-ui/Table/TableHead';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
-import { Standings, ProblemInfo } from '../typings';
+import { Standings, ContestProblem } from '../typings';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
 import { StandardProps } from 'material-ui';
@@ -14,7 +14,7 @@ import { StandardProps } from 'material-ui';
 
 interface IStandingsProps {
   standing: Standings;
-  problems: ProblemInfo[];
+  problems: ContestProblem[];
   classes?: any;
 }
 

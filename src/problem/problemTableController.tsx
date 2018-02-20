@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProblemInfo, ContestInfo } from '../typings';
+import { ContestProblem, ContestInfo } from '../typings';
 import ContestApi from '../api/contestApi';
 import ProblemTable from './problemTable';
 
@@ -8,7 +8,7 @@ interface IProblemTableControllerProps {
 }
 
 interface IProblemTableControllerState {
-  problems: ProblemInfo[];
+  problems: ContestProblem[];
 }
 
 class ProblemTableController extends React.Component<IProblemTableControllerProps, IProblemTableControllerState> {

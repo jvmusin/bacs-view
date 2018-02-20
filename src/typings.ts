@@ -5,16 +5,27 @@ export type ContestInfo = {
   name: string;
   startTime: string;
   finishTime: string;
-  problems: ProblemInfo[];
+  problems: ContestProblem[];
 };
 
-export type ProblemInfo = {
+export interface ProblemInfo {
   name: string;
-  index: string;
   statementUrl: string;
   timeLimitMillis: number;
   memoryLimitBytes: number
 };
+
+export interface ContestProblem extends ProblemInfo {
+  index: string;
+  contestId?: ContestInfo['id'];
+}
+
+export interface ArchiveProblem extends ProblemInfo {
+  problemId: {
+    resourceName: string;
+    resourceProblemId: string;
+  }
+}
 
 export enum AuthState {
   Success,
@@ -56,7 +67,7 @@ export namespace Language {
 
 export type Submission = {
   id: number;
-  problem: ProblemInfo;
+  problem: ContestProblem;
   author: User;
   created: string;
   language: Language;
@@ -73,7 +84,7 @@ export type SubmissionResult = {
 }
 
 export type ContestantProblemResult = {
-  problemIndex: ProblemInfo['index'];
+  problemIndex: ContestProblem['index'];
   solved: boolean;
   failTries: number;
   solvedAt: number;

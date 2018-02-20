@@ -1,5 +1,5 @@
 import axios, { AxiosPromise } from 'axios';
-import { ContestInfo, ProblemInfo, Submission, Standings } from '../typings';
+import { ContestInfo, ContestProblem, Submission, Standings } from '../typings';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ class ContestApi {
       .then(response => response.data);
   }
 
-  static SubmitSolution(problemIndex: ProblemInfo['index'], solution: string, language: string, contestId: ContestInfo['id']) {
+  static SubmitSolution(problemIndex: ContestProblem['index'], solution: string, language: string, contestId: ContestInfo['id']) {
     return axios.post(`/submissions`, {
       language,
       solution,
@@ -45,6 +45,10 @@ class ContestApi {
   static GetAllSubmissions(contestId): Promise<Submission[]> {
     return axios.get(`contests/${contestId}/submissions/`)
       .then(response => response.data);
+  }
+
+  static EditContest(contestId, contest): Promise<any> {
+    return axios.put(`contests/${contestId}`, contest).then(r => r.data);
   }
 }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContestInfo, ProblemInfo, Enhance } from '../typings';
+import { ContestInfo, ContestProblem, Enhance } from '../typings';
 import ProblemTable from '../problem/problemTable';
 import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '../DateFormats';
 

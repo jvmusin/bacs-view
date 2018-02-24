@@ -1,5 +1,10 @@
 import axios, { AxiosPromise } from 'axios';
-import { ContestInfo, ContestProblem, Submission, Standings } from '../typings';
+import {
+  ContestInfo,
+  ContestProblem,
+  Standings,
+  Submission
+  } from '../typings';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -47,8 +52,11 @@ class ContestApi {
       .then(response => response.data);
   }
 
-  static EditContest(contestId, contest): Promise<any> {
-    return axios.put(`contests/${contestId}`, contest).then(r => r.data);
+  static EditContest(contest: ContestInfo): Promise<any> {
+    return axios.put(`contests/${contest.id}`, contest).then(r => r.data);
+  }
+  static CreateContest(contest: ContestInfo): Promise<any> {
+    return axios.post(`contests/`, contest).then(r => r.data);
   }
 }
 

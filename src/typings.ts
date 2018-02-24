@@ -107,4 +107,5 @@ export type Enhance<T> = {
   title: string;
   width?: number;
   renderCell: (submission: T) => React.ReactNode;
+  key?: (T) => string;
 };

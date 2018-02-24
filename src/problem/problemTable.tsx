@@ -1,11 +1,11 @@
-import * as React from 'react';
-import Table, { TableFooter, TablePagination } from 'material-ui/Table';
-import TableRow from 'material-ui/Table/TableRow';
-import TableCell from 'material-ui/Table/TableCell';
-import TableBody from 'material-ui/Table/TableBody';
-import TableHead from 'material-ui/Table/TableHead';
-import { ContestProblem, Enhance, ProblemInfo } from '../typings';
 import { StyleRules } from 'material-ui/styles';
+import Table, { TableFooter, TablePagination } from 'material-ui/Table';
+import TableBody from 'material-ui/Table/TableBody';
+import TableCell from 'material-ui/Table/TableCell';
+import TableHead from 'material-ui/Table/TableHead';
+import TableRow from 'material-ui/Table/TableRow';
+import * as React from 'react';
+import { ContestProblem, Enhance, ProblemInfo } from '../typings';
 
 interface IProblemTableProps {
   problems: ProblemInfo[];
@@ -28,7 +28,7 @@ const inlineStyleByEnhance = (enhance: Enhance<any>) => (
   }
 );
 
-const defaultRowsPerPage = 15;
+const defaultRowsPerPage = 10;
 
 class ProblemTable extends React.Component<IProblemTableProps, IProblemTableState> {
   state = {
@@ -36,16 +36,16 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
     rowsPerPage: defaultRowsPerPage,
   }
 
-  handlePageChanged = (currentPage) => this.setState({ currentPage });
+  handlePageChanged = (_, currentPage) => this.setState({ currentPage });
   handleChangeRowsPerPage = (event) => this.setState({ rowsPerPage: event.target.value });
 
   render() {
     const { currentPage, rowsPerPage } = this.state;
     const { enhance, problems, withPaging } = this.props;
-    const selectedProblems = withPaging 
-      ? problems
-      : problems.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
-
+    const selectedProblems = withPaging
+      ? problems.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
+      : problems;
+      
     return (
       <Table>
         <TableHead>
@@ -68,12 +68,18 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
         <TableBody>
           {
             selectedProblems &&
-            selectedProblems              
+            selectedProblems
               .map((problem, index) => (
                 <TableRow key={index}>
                   {
                     enhance &&
-                    enhance.map(en => <TableCell key={en.title} style={inlineStyleByEnhance(en)}> {en.renderCell(problem)} </TableCell>)
+                    enhance.map((en, cellIndex) =>
+                      <TableCell
+                        key={en.key ? en.key(problem) : cellIndex}
+                        style={inlineStyleByEnhance(en)}>
+                        {en.renderCell(problem)}
+                      </TableCell>
+                    )
                   }
                   <TableCell>{formatProblemName(problem as ContestProblem)}</TableCell>
                   <TableCell>
@@ -93,7 +99,8 @@ class ProblemTable extends React.Component<IProblemTableProps, IProblemTableStat
         <TableFooter>
           {
             withPaging &&
-            selectedProblems && selectedProblems.length > defaultRowsPerPage &&
+            selectedProblems &&
+            problems && problems.length > defaultRowsPerPage &&
             <TableRow>
               <TablePagination
                 rowsPerPage={rowsPerPage}

@@ -1,10 +1,11 @@
-import * as React from 'react';
-import { ContestInfo } from '../typings';
-import { FormGroup, FormControl } from 'material-ui/Form/'
+import Button from 'material-ui/Button';
+import { FormControl, FormGroup } from 'material-ui/Form/';
+import { StyleRules } from 'material-ui/styles';
+import withStyles from 'material-ui/styles/withStyles';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
-import withStyles from 'material-ui/styles/withStyles';
-import { StyleRules } from 'material-ui/styles';
+import * as React from 'react';
+import { ContestInfo } from '../typings';
 
 interface IContestInfoEditorProps {
   onChangeContestInfo: (contestInfo: ContestInfo) => void;
@@ -15,12 +16,49 @@ interface IContestInfoEditorProps {
 const substringToDateAndTime = (dateInISO: string) => [dateInISO.substring(0, 10), dateInISO.substring(11, 19)];
 const combainDate = (date: string, time: string) => date + 'T' + time;
 
-class ContestInfoEditor extends React.Component<IContestInfoEditorProps> {
-  handleChange = (event) => {
+class ContestInfoEditor extends React.Component<IContestInfoEditorProps, any> {
+  constructor(props: IContestInfoEditorProps) {
+    super(props);
+    this.state = {
+      ...this.destructTime(props.contestInfo)
+    };
+  }
+
+  destructTime = (contestInfo: ContestInfo) => {
+    if (!contestInfo)
+      return {};
+    const [startDate, startTime] = substringToDateAndTime(contestInfo.startTime);
+    const [finishDate, finishTime] = substringToDateAndTime(contestInfo.finishTime);
+    return {
+      startDate, startTime, finishDate, finishTime
+    }
+  }
+
+  constructTime = () => {
+    const { startDate, startTime, finishDate, finishTime } = this.state;
+    return {
+      startTime: combainDate(startDate, startTime),
+      finishTime: combainDate(finishDate, finishTime),
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      ...this.destructTime(nextProps.contestInfo)
+    })
+  }
+
+  updateInfo = () => {
     this.props.onChangeContestInfo({
       ...this.props.contestInfo,
-      [event.target.name]: event.target.value
+      ...this.constructTime(),
     });
+  }
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    }, this.updateInfo)
   }
 
   render() {
@@ -29,14 +67,14 @@ class ContestInfoEditor extends React.Component<IContestInfoEditorProps> {
     const [finishDate, finishTime] = substringToDateAndTime(contestInfo.finishTime);
 
     return <FormGroup className={classes.group}>
-    <Typography type='headline'>
+      <Typography type='headline'>
         Контест билдер, йоу!
     </Typography>
       <FormControl className={classes.nameForm}>
         <TextField
           onChange={this.handleChange}
           name='name'
-          value={name}
+          value={contestInfo.name}
           label='Название контеста'
           autoFocus
         />
@@ -82,7 +120,6 @@ const selectWidth = 170;
 const styles: StyleRules = {
   group: {
     width: selectWidth * 2 + 20,
-    marginBottom: 30,
   },
   form: {
     justifyContent: 'space-between',

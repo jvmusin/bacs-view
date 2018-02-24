@@ -1,9 +1,9 @@
 import AddIcon from 'material-ui-icons/Add';
-import DeleteIcon from 'material-ui-icons/Delete';
+import Remove from 'material-ui-icons/Remove';
+import SaveIcon from 'material-ui-icons/Save';
 import Button from 'material-ui/Button';
 import Checkbox from 'material-ui/Checkbox';
-import { FormControl, FormControlLabel, FormGroup } from 'material-ui/Form';
-import Icon from 'material-ui/Icon';
+import { FormControlLabel } from 'material-ui/Form';
 import IconButton from 'material-ui/IconButton';
 import Paper from 'material-ui/Paper/Paper';
 import { StyleRules } from 'material-ui/styles';
@@ -11,33 +11,34 @@ import withStyles from 'material-ui/styles/withStyles';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography/Typography';
 import * as React from 'react';
-import ContestInfoEditer from './ContestInfoEditor';
-import ContestApi from '../api/contestApi';
+import ContestInfoEditer from './contestInfoEditor';
+import contestApi from '../api/contestApi';
 import problemsApi from '../api/problemsApi';
-import AuthService from '../auth/authService';
-import { formatTime } from '../DateFormats';
+import { hashHistory } from '../app/history';
+import authService from '../auth/authService';
 import ProblemTable from '../problem/problemTable';
 import {
   ArchiveProblem,
   ContestInfo,
   ContestProblem,
-  Enhance
+  Enhance,
+  ProblemInfo
   } from '../typings';
 
 interface IContestBuilderProps {
   classes?: any;
   match: any;
 }
-type FullProblemInfo = ArchiveProblem & ContestProblem;
+
 interface IContestBuilderState {
-  allProblems: ArchiveProblem[];
+  allProblems: Map<string, ArchiveProblem>;
   includeExternal: boolean;
   contestInfo: ContestInfo;
   error: boolean;
 }
 
 class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuilderState> {
-  indexes;
+  indexes = new Map<string, string>();
   catch = (e) => console.log(e) || this.setState({ error: true })
   constructor(props) {
     super(props);
@@ -53,18 +54,17 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
         problems: [],
         id: null,
       },
-      allProblems: [],
+      allProblems: new Map(),
       includeExternal: false,
       error: false,
     };
-    this.indexes = {};
     this.handleProblemIndexChange = this.handleProblemIndexChange.bind(this);
   }
 
   fetchContestInfo = async (contestId) => {
     if (!contestId)
       return;
-    const contestInfo = await ContestApi.GetContestInfo(contestId);
+    const contestInfo = await contestApi.GetContestInfo(contestId);
     this.setState({
       contestInfo
     });
@@ -74,11 +74,17 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
     await this.patchProblems(problems);
   }
 
+  private patchProblem = (problem) => {
+    if (problem.problemId)
+      return Promise.resolve(problem);
+    return problemsApi.GetArchiveProblem(problem.contestId, problem.index);
+  }
+
   private async patchProblems(problems: ContestProblem[]) {
-    const archiveProblems = await Promise.all(problems.map(problem => problemsApi.GetArchiveProblem(problem.contestId, problem.index)));
+    const archiveProblems = await Promise.all(problems.map(this.patchProblem));
     const updatedByArchiveIdsProblems = problems.map((p, index) => ({
       ...p,
-      ...archiveProblems[index]
+      ...(archiveProblems[index][0])
     }));
     this.setState(prevState => ({
       contestInfo: {
@@ -90,7 +96,14 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
 
   fetchAllProblems = () => {
     problemsApi.GetProblems(this.state.includeExternal)
-      .then(allProblems => this.setState({ allProblems }))
+      .then(allProblems => {
+        const hashes = allProblems.map(p => hashByProblem(p));
+        this.setState({
+          allProblems: new Map(
+            allProblems.map<[string, ArchiveProblem]>((p, index) => [hashes[index], p])
+          )
+        });
+      })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -112,93 +125,156 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
   }
 
   render() {
-    if (!AuthService.IsAdmin()) {
+    if (!authService.IsAdmin()) {
       return null;
     }
     const { classes } = this.props;
     const { contestInfo, allProblems, includeExternal } = this.state;
-    const contestProblemsNamesSet = new Set(contestInfo.problems.map(p => p.name));
-    const otherProblems = allProblems.filter(p => !contestProblemsNamesSet.has(p.name));
+    const contestProblemsNamesSet = new Set(contestInfo.problems.map(p => hashByProblem(p)));
+    const otherProblems = Array.from(allProblems.values()).filter(p => !contestProblemsNamesSet.has(hashByProblem(p)));
     return (
       <Paper className={classes.container}>
-        <ContestInfoEditer />
+        <div>
+          <ContestInfoEditer
+            onChangeContestInfo={this.handleInfoChanged}
+            contestInfo={contestInfo}
+          />
+          <Button onClick={() => this.updateContest(this.state.contestInfo)}>
+            <SaveIcon />
+            Сохранить общую информацию
+          </Button>
+        </div>
         <div>
           <Typography type='subheading'>
             Задачи в контесте
           </Typography>
-            <ProblemTable
-              problems={contestInfo.problems}
-            />
+          <ProblemTable
+            problems={contestInfo.problems}
+            enhance={this.contestProblemsEnhance}
+          />
         </div>
         <div>
-          <Typography type='subheading'>
-            Все задачи
+          <div className={classes.tableControl}>
+            <Typography type='subheading'>
+              Все задачи
           </Typography>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={includeExternal}
-                onChange={this.handleCheckboxChange}
-                name='includeExternal'
-              />
-            }
-            label='External'
-          />
-          <Button onClick={this.fetchAllProblems}>
-            Загрузить все задачи (будет больно)
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={includeExternal}
+                  onChange={this.handleCheckboxChange}
+                  name='includeExternal'
+                />
+              }
+              label='External'
+            />
+            <Button onClick={this.fetchAllProblems}>
+              Загрузить все задачи (будет больно)
           </Button>
+          </div>
           <ProblemTable
             problems={otherProblems}
             enhance={this.allProblemsEnhance}
             withPaging
           />
         </div>
-      </Paper>
+      </Paper >
     );
   }
 
-  updateContest = async (contestInfo) => {
-    return ContestApi.EditContest(this.props.match.params.contestId, contestInfo);
+  handleInfoChanged = (contestInfo: ContestInfo) => {
+    this.setState({
+      contestInfo
+    })
   }
 
   handleAddProblem = (problem: ArchiveProblem) => () => {
     const patchedProblem = {
       ...problem,
-      index: this.indexes[problem.problemId.resourceProblemId],
+      index: this.indexes.get(hashByProblem(problem)),
     }
     const newProblems = [...this.state.contestInfo.problems, patchedProblem];
     const newInfo = {
       ...this.state.contestInfo,
       problems: newProblems,
-    }
+    };
+
     this.updateContest(newInfo)
-      .then(() => this.setState({ contestInfo: newInfo }))
+      .then(() => this.setState(prevState => {
+        prevState.allProblems.delete(hashByProblem(problem));
+        return {
+          contestInfo: newInfo,
+        };
+      }))
       .catch(this.catch);
   }
 
+  handleRemoveProblem = (problem: ContestProblem) => () => {
+    const newProblems = this.state.contestInfo.problems.filter(p => p.index !== problem.index);
+    const newInfo = {
+      ...this.state.contestInfo,
+      problems: newProblems,
+    };
+    this.updateContest(newInfo)
+      .then(async () => {
+        const patched = await this.patchProblem(problem);
+        this.setState(prevState => {
+          prevState.allProblems.set(hashByProblem(patched), patched);
+          return {
+            contestInfo: newInfo
+          };
+        })
+      })
+  }
+
   handleProblemIndexChange(event) {
-    this.indexes[event.target.name] = event.target.value;
+    this.indexes.set(event.target.name, event.target.value);
     this.setState({});
   }
 
-  allProblemsEnhance = [{
-    title: '',
-    width: 150,
-    renderCell: (problem: ArchiveProblem) => {
-      const index = this.indexes[problem.problemId.resourceProblemId];
-      return <>
-        <TextField
+  updateContest = (contestInfo: ContestInfo) => {
+    if (this.props.match.params.contestId)
+      return contestApi.EditContest(contestInfo);
+
+    return contestApi.EditContest(contestInfo)
+      .then((id) => hashHistory.push('/admin/contest/' + id));
+  }
+
+  allProblemsEnhance = [
+    {
+      title: '',
+      width: 50,
+      renderCell: (problem: ArchiveProblem) => (
+        <IconButton disabled={!this.indexes.get(hashByProblem(problem))} onClick={this.handleAddProblem(problem)} >
+          <AddIcon />
+        </IconButton>
+      )
+    },
+    {
+      title: 'Индекс задачи',
+      width: 150,
+      key: (problem) => hashByProblem(problem),
+      renderCell: (problem: ArchiveProblem) => {
+        const index = this.indexes.get(hashByProblem(problem));
+        return <TextField
           error={index === ''}
-          name={problem.problemId.resourceProblemId}
+          name={hashByProblem(problem)}
           value={index}
           onChange={this.handleProblemIndexChange}
         />
-        <IconButton onClick={this.handleAddProblem(problem)} >
-          <AddIcon />
-        </IconButton>
-      </>
-    }
-  }];
+      }
+    },
+  ];
+
+  contestProblemsEnhance = [{
+    title: '',
+    width: 50,
+    renderCell: (problem: ContestProblem) => (
+      <IconButton onClick={this.handleRemoveProblem(problem)} >
+        <Remove />
+      </IconButton>
+    )
+  }]
 }
 
 const styles: StyleRules = {
@@ -206,7 +282,20 @@ const styles: StyleRules = {
     paddingLeft: 20,
     paddingTop: 10,
     paddingBottom: 20,
+    '& > div': {
+      marginBottom: 30,
+    }
   },
+  tableControl: {
+    marginBottom: 5,
+  }
 };
+
+const hashByProblem = (p: ProblemInfo) => {
+  const problemId = (p as ArchiveProblem).problemId;
+  if (problemId)
+    return problemId.resourceName + problemId.resourceProblemId;
+  return p.name;
+}
 
 export default withStyles(styles)<IContestBuilderProps>(ContestBuilder as any);

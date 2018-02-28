@@ -1,4 +1,3 @@
-import { StyleRules } from 'material-ui/styles';
 import Table, { TableFooter, TablePagination } from 'material-ui/Table';
 import TableBody from 'material-ui/Table/TableBody';
 import TableCell from 'material-ui/Table/TableCell';

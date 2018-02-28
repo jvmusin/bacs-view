@@ -1,14 +1,13 @@
-import * as React from 'react';
-import Table, { TableFooter, TablePagination } from 'material-ui/Table';
-import TableRow from 'material-ui/Table/TableRow';
-import TableCell from 'material-ui/Table/TableCell';
-import TableBody from 'material-ui/Table/TableBody';
-import TableHead from 'material-ui/Table/TableHead';
-import TextField from 'material-ui/TextField';
-import { Submission, ContestProblem, SubmissionResult, Enhance } from '../typings';
-import { Verdict } from './verdict';
 import Paper from 'material-ui/Paper';
+import TableBody from 'material-ui/Table/TableBody';
+import TableCell from 'material-ui/Table/TableCell';
+import TableHead from 'material-ui/Table/TableHead';
+import TableRow from 'material-ui/Table/TableRow';
+import * as React from 'react';
+import { Verdict } from './verdict';
 import { formatProblemName } from '../problem/problemTable';
+import { Enhance, Submission, SubmissionResult } from '../typings';
+import Table, {  } from 'material-ui/Table';
 
 interface ISubmitProps {
   submissions: Submission[];
@@ -21,9 +20,7 @@ const toSeconds = (ms) => Math.floor(ms / 1000);
 
 const buildVerdictRow = (result: SubmissionResult) => {
   const { verdict, testsPassed } = result;
-  const isAcc = verdict === Verdict.ACCEPTED;
   const short = Verdict.short(verdict);
-  const rus = Verdict.rus(verdict);
   const testsPassedStr = testsPassed || testsPassed === 0
     ? ` тест ${testsPassed}`
     : '';
@@ -51,7 +48,7 @@ const Submits = ({ submissions, enhance }: ISubmitProps) => {
           {
             submissions &&
             submissions
-              .map((submission, index) => (
+              .map((submission) => (
                 <TableRow key={submission.id}>
                   {
                     enhance &&

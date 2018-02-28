@@ -1,15 +1,12 @@
-import * as React from 'react';
-import { ContestProblem, ContestInfo, Language } from '../typings';
-import Select from 'material-ui/Select';
 import Button from 'material-ui/Button';
-import Input, { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormGroup, FormControl, FormHelperText } from 'material-ui/Form';
+import { FormGroup } from 'material-ui/Form';
 import Paper from 'material-ui/Paper';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
+import * as React from 'react';
 import ContestApi from '../api/contestApi';
 import NativeSelect from '../common/select';
+import { ContestInfo, ContestProblem, Language } from '../typings';
 
 interface ISubmitProps {
   contestId: ContestInfo['id'],
@@ -46,7 +43,7 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
     ContestApi.SubmitSolution(
       this.state.problemIndex,
       this.state.solution,
-      this.state.language,
+      unFormattedLanguage,
       this.props.contestId
     );
     this.setState({ solution: '' });
@@ -62,14 +59,14 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
             label={'Задача'}
             name={'problemIndex'}
             onChange={this.handleChange}
-            selectedValue={this.state.problemIndex}
+            selectedValue={problemIndex}
             values={problems.map(p => p.name)}
           />
           <NativeSelect
             label={'Язык'}
             name={'language'}
             onChange={this.handleChange}
-            selectedValue={this.state.language}
+            selectedValue={language}
             values={avaliableLanguages}
           />
         </FormGroup>
@@ -77,14 +74,14 @@ class SubmitForm extends React.Component<ISubmitProps, ISubmitState> {
           className={classes.codePlace}
           name='solution'
           rows={20}
-          value={this.state.solution}
+          value={solution}
           onChange={this.handleChange}
           placeholder='print(1)'
         />
         <Button disabled={!(
-          this.state.solution &&
-          this.state.language &&
-          this.state.problemIndex
+          solution &&
+          language &&
+          problemIndex
         )}
           className={classes.submitButton}
           onClick={this.submit}>

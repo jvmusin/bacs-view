@@ -1,17 +1,22 @@
+import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+import Typography from 'material-ui/Typography';
 import * as React from 'react';
-import { ContestInfo, ContestProblem, Enhance } from '../typings';
+import { Link } from 'react-router-dom';
+import {
+  format,
+  FormatType,
+  getDateDiff,
+  padToTwoDigit,
+  TimeDiffType
+  } from '../DateFormats';
 import ProblemTable from '../problem/problemTable';
-import { format, FormatType, getDateDiff, TimeDiffType, padToTwoDigit } from '../DateFormats';
+import { ContestInfo } from '../typings';
 
 import ExpansionPanel, {
   ExpansionPanelDetails,
   ExpansionPanelSummary,
 } from 'material-ui/ExpansionPanel';
-import Typography from 'material-ui/Typography';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 
-import { Link } from 'react-router-dom';
-import { match } from 'react-router';
 
 interface IContestCardProps {
   contest: ContestInfo;
@@ -28,7 +33,7 @@ function formatContinuingContestTime(now: Date, finish: Date) {
 }
 
 const ContestCard = (props: IContestCardProps) => {
-  const { contest, isExpanded, onExpand, classes } = props;
+  const { contest, isExpanded, onExpand } = props;
   const start = new Date(contest.startTime);
   const finish = new Date(contest.finishTime);
   const now = new Date();
@@ -36,10 +41,10 @@ const ContestCard = (props: IContestCardProps) => {
     <ExpansionPanel expanded={isExpanded} onChange={onExpand}>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <div>
-          <Typography type='headline' >
+          <Typography variant='headline' >
             {contest.name}
           </Typography>
-          <Typography type='subheading'>
+          <Typography variant='subheading'>
             {
               now < start &&
               'Начнется ' + format(start)

@@ -6,4 +6,4 @@ ghpages.publish(path, {
   dest: 'bacs-view',
   repo: 'https://github.com/Ploffi/ploffi.github.io.git',
   branch: 'master'
-});
+}, (e) => e ? console.error(e) : console.log('hockey'));

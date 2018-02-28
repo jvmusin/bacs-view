@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { MuiThemeProvider, createMuiTheme, withStyles, StyleRules } from 'material-ui/styles';
-
-import blueGrey from 'material-ui/colors/blueGrey';
 import amber from 'material-ui/colors/amber';
-import red from 'material-ui/colors/red';
+import blueGrey from 'material-ui/colors/blueGrey';
 import grey from 'material-ui/colors/grey';
+import red from 'material-ui/colors/red';
+import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import * as React from 'react';
+
 
 const muiTheme = createMuiTheme({
   typography: {

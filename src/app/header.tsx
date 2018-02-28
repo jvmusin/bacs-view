@@ -1,18 +1,16 @@
-import * as React from 'react';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import TagFacesIcon from 'material-ui-icons/TagFaces';
 import ExitToApp from 'material-ui-icons/ExitToApp';
 import Home from 'material-ui-icons/Home';
-import IconButton from 'material-ui/IconButton';
 import AppBar from 'material-ui/AppBar';
-import { SessionInfo } from '../typings';
-import AuthService from '../auth/authService';
-import { withStyles, StyleRules } from 'material-ui/styles';
+import IconButton from 'material-ui/IconButton';
+import { StyleRules, withStyles } from 'material-ui/styles';
 import { ClassNameMap } from 'material-ui/styles/withStyles';
-import Popover from 'material-ui/Popover';
-import List, { ListItem, ListItemText, ListSubheader } from 'material-ui/List';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
+import AuthService from '../auth/authService';
+import { SessionInfo } from '../typings';
+import {  } from 'material-ui/List';
 
 interface IHeaderState {
   sessionInfo: SessionInfo;
@@ -58,7 +56,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     });
   }
 
-  logout = (event) => {
+  logout = () => {
     AuthService.Logout();
     window.location.reload(false);
   }
@@ -73,13 +71,13 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
             <IconButton color='secondary'>
               <Home className={classes.headerIcon} />
             </IconButton>
-            <Typography className={classes.homeTitleWrapper} type='title'>
+            <Typography className={classes.homeTitleWrapper} variant='title'>
               <span className={classes.homeTitle}>Welcome!</span>
             </Typography>
           </Link>
         </div>
 
-        <Typography type='title' color='inherit'>
+        <Typography variant='title' color='inherit'>
           <span>
             {
               sessionInfo &&

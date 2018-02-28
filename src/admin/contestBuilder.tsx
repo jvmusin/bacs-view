@@ -21,7 +21,6 @@ import {
   ArchiveProblem,
   ContestInfo,
   ContestProblem,
-  Enhance,
   ProblemInfo
   } from '../typings';
 
@@ -145,7 +144,7 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
           </Button>
         </div>
         <div>
-          <Typography type='subheading'>
+          <Typography >
             Задачи в контесте
           </Typography>
           <ProblemTable
@@ -155,7 +154,7 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
         </div>
         <div>
           <div className={classes.tableControl}>
-            <Typography type='subheading'>
+            <Typography variant='subheading'>
               Все задачи
           </Typography>
             <FormControlLabel

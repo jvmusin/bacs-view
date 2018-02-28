@@ -1,11 +1,6 @@
 import AuthApi from '../api/authApi';
 import { AuthState, SessionInfo, UserRole } from '../typings';
 
-type credentials = {
-  username: string;
-  password: string;
-};
-
 function parseJwt(token): SessionInfo {
   if (!token)
     return null;

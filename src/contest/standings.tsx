@@ -1,15 +1,13 @@
-import * as React from 'react';
-import Table, { TableFooter, TablePagination } from 'material-ui/Table';
-import TableRow from 'material-ui/Table/TableRow';
-import TableCell from 'material-ui/Table/TableCell';
-import TableBody from 'material-ui/Table/TableBody';
-import TableHead from 'material-ui/Table/TableHead';
-import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
-import { Standings, ContestProblem } from '../typings';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
-import { StandardProps } from 'material-ui';
+import TableBody from 'material-ui/Table/TableBody';
+import TableCell from 'material-ui/Table/TableCell';
+import TableHead from 'material-ui/Table/TableHead';
+import TableRow from 'material-ui/Table/TableRow';
+import * as React from 'react';
+import { ContestProblem, Standings } from '../typings';
+import Table, {  } from 'material-ui/Table';
 
 
 interface IStandingsProps {

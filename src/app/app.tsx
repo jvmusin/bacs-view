@@ -1,7 +1,7 @@
 import Paper from 'material-ui/Paper';
 import { StyleRules, withStyles } from 'material-ui/styles';
 import * as React from 'react';
-import { HashRouter as Router, Link, Route } from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import Header from './header';
 import Theme from './theme';
 import ContestBuilder from '../admin/contestBuilder';

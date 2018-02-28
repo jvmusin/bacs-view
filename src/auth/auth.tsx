@@ -1,23 +1,18 @@
+import Button from 'material-ui/Button';
+import { CircularProgress } from 'material-ui/Progress';
+import { StyleRules } from 'material-ui/styles';
+import withStyles from 'material-ui/styles/withStyles';
+import TextField from 'material-ui/TextField';
 import * as React from 'react';
+import { Fragment } from 'react';
+import AuthService from './authService';
+import { AuthState } from '../typings';
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import AuthService from './authService';
-import { isNullOrUndefined } from 'util';
-import { AuthState } from '../typings';
-import { StyleRules } from 'material-ui/styles';
-import withStyles from 'material-ui/styles/withStyles';
-import { Fragment } from 'react';
-import { CircularProgress } from 'material-ui/Progress';
 
-interface IAuthProps {
-  classes: any;
-}
 
 interface IAuthState {
   login: string;
@@ -56,11 +51,11 @@ class Auth extends React.Component<any, IAuthState> {
 
     AuthService.Auth(this.state.login, this.state.password)
       .then(authState => this.setState({ authState, loading: false }))
-      .catch(reason => this.setState({
-        errorMessage: 'Не удалось авторизоваться ;(',
-        authState: AuthState.Fail,
-        loading: false
-      }));
+      .catch(() => this.setState({
+          errorMessage: 'Не удалось авторизоваться ;(',
+          authState: AuthState.Fail,
+          loading: false
+        }));
   }
 
   handleInputKeyPressed = (event) => {

@@ -17,7 +17,7 @@ export const format = (date: Date, formatType: FormatType = FormatType.TimeAndDa
 const months = [
   'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'ноября', 'декабря',
 ];
-4
+
 const formatDate = (date: Date) => [
   date.getDate(),
   months[date.getMonth()],
@@ -25,8 +25,6 @@ const formatDate = (date: Date) => [
 ].filter(l => l).join(' ');
 
 export const formatTime = (date: Date) => padToTwoDigit(date.getHours()) + ':' + padToTwoDigit(date.getMinutes());
-
-const formatDateWithTime = (date: Date) => formatDate(date) + ' в ' + formatTime(date);
 
 const hour = 1000 * 60 * 60;
 

@@ -1,15 +1,8 @@
-import axios, { AxiosPromise } from 'axios';
-import {
-  ArchiveProblem,
-  ContestInfo,
-  ContestProblem,
-  Standings,
-  Submission
-  } from '../typings';
+import axios from 'axios';
+import { ArchiveProblem } from '../typings';
 
 class ProblemsApi {
-  static GetProblems(external?: boolean): Promise<ArchiveProblem[]> {
-    const externalPostfix = external ? '?external' : '';
+  static GetProblems(_?: boolean): Promise<ArchiveProblem[]> {
     return axios.get('problems')
       .then(response => response.data);
   }

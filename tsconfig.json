@@ -8,7 +8,9 @@
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "noImplicitThis": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
   },
   "exclude": [
     "node_modules",

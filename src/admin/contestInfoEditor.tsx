@@ -1,4 +1,3 @@
-import Button from 'material-ui/Button';
 import { FormControl, FormGroup } from 'material-ui/Form/';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
@@ -62,12 +61,12 @@ class ContestInfoEditor extends React.Component<IContestInfoEditorProps, any> {
   }
 
   render() {
-    const { classes, contestInfo, onChangeContestInfo } = this.props;
+    const { classes, contestInfo } = this.props;
     const [startDate, startTime] = substringToDateAndTime(contestInfo.startTime);
     const [finishDate, finishTime] = substringToDateAndTime(contestInfo.finishTime);
 
     return <FormGroup className={classes.group}>
-      <Typography type='headline'>
+      <Typography variant='headline'>
         Контест билдер, йоу!
     </Typography>
       <FormControl className={classes.nameForm}>

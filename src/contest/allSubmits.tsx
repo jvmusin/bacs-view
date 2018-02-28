@@ -1,12 +1,11 @@
+import { FormGroup } from 'material-ui/Form';
+import Paper from 'material-ui/Paper';
+import { StyleRules, withStyles } from 'material-ui/styles';
+import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import Submits from './submits';
-import Paper from 'material-ui/Paper';
-import TextField from 'material-ui/TextField';
-import Select from 'material-ui/Select';
-import { Submission, ContestProblem, Enhance } from '../typings';
-import { FormGroup } from 'material-ui/Form'
 import NativeSelect from '../common/select';
-import { StyleRules, withStyles } from 'material-ui/styles';
+import { ContestProblem, Enhance, Submission } from '../typings';
 
 
 interface IAllSubmitsProps {

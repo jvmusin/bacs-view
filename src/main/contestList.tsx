@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { ContestInfo } from '../typings';
-import ContestCard from './contestCard';
+import Update from 'material-ui-icons/Update';
+import IconButton from 'material-ui/IconButton';
 import { StyleRules } from 'material-ui/styles';
 import withStyles from 'material-ui/styles/withStyles';
-import contestApi from '../api/contestApi';
-import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography/';
-import Update from 'material-ui-icons/Update';
+import * as React from 'react';
+import ContestCard from './contestCard';
+import contestApi from '../api/contestApi';
+import { ContestInfo } from '../typings';
 
 interface IContestListState {
   contests: ContestInfo[];
@@ -46,7 +46,7 @@ class ContestList extends React.Component<IContestListProps, IContestListState> 
     this.fetchContests();
   }
 
-  handleExpandContest(event, expand, index) {
+  handleExpandContest(_, expand, index) {
     this.setState(prevState => ({
       expandedContestIndx: prevState.expandedContestIndx === index && !expand
         ? -1
@@ -58,7 +58,7 @@ class ContestList extends React.Component<IContestListProps, IContestListState> 
     const { classes } = this.props;
     return (<div>
       <div>
-        <Typography type='title' style={{ color: 'white' }}>
+        <Typography variant='title' style={{ color: 'white' }}>
           Список доступных вам контестов:
        </Typography>
       </div>

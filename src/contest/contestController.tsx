@@ -1,16 +1,21 @@
-import * as React from 'react';
-import Paper from 'material-ui/Paper/Paper';
-import { Route, match, Redirect, Switch } from 'react-router';
 import { History, Location } from 'history';
+import Paper from 'material-ui/Paper/Paper';
+import * as React from 'react';
+import {
+  match,
+  Redirect,
+  Route,
+  Switch
+  } from 'react-router';
+import AllSubmits from './allSubmits';
 import ContestMenu from './contestMenu';
-import ProblemTable from '../problem/problemTable';
-import { ContestInfo, ContestProblem, Submission, SessionInfo } from '../typings';
-import ContestApi from '../api/contestApi';
+import Standings from './standings';
 import SubmitForm from './submitForm';
 import Submits from './submits';
-import Standings from './standings';
-import AllSubmits from './allSubmits';
+import ContestApi from '../api/contestApi';
 import AuthService from '../auth/authService';
+import ProblemTable from '../problem/problemTable';
+import { ContestInfo, SessionInfo, Submission } from '../typings';
 
 interface IContestControllerProps {
   match: match<any>;
@@ -137,7 +142,7 @@ export default class ContestController extends React.Component<IContestControlle
   to = (to) => this.props.match.url + '/' + to;
 
   render() {
-    const { match, history } = this.props;
+    const { match, } = this.props;
     const { currentTab, contestInfo, allSubmits, standing, userSubmits, sessionInfo } = this.state;
     const problems = contestInfo && contestInfo.problems || [];
     const current = match.url + '/';
@@ -158,22 +163,22 @@ export default class ContestController extends React.Component<IContestControlle
         <Route
           exact
           path={this.to(PagePath.Problems)}
-          render={(props) => <Paper>
+          render={() => <Paper>
             <ProblemTable problems={problems} />
           </Paper>} />
         <Route
           exact
           path={this.to(PagePath.Submit)}
-          render={(props) => <SubmitForm contestId={contestInfo && contestInfo.id} problems={problems} />} />
+          render={() => <SubmitForm contestId={contestInfo && contestInfo.id} problems={problems} />} />
         <Route
           exact
           path={this.to(PagePath.Problems)}
-          render={(props) => <Submits submissions={userSubmits} />} />
+          render={() => <Submits submissions={userSubmits} />} />
         <Route
           exact
           path={this.to(PagePath.Standings)}
           render={
-            (props) => <Standings problems={problems} standing={standing} />
+            () => <Standings problems={problems} standing={standing} />
           } />
         {
           (isContestFinished || isAdmin)
@@ -182,7 +187,7 @@ export default class ContestController extends React.Component<IContestControlle
             exact
             path={this.to(PagePath.AllSubmits)}
             render={
-              (props) => <AllSubmits problems={problems} submissions={allSubmits} />
+              () => <AllSubmits problems={problems} submissions={allSubmits} />
             } />
         }
       </Switch>

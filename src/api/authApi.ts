@@ -1,7 +1,5 @@
 import axios, { AxiosPromise } from 'axios';
 
-const clearAxios = axios.create();
-
 class AuthApi {
   static SignUp(username, password): AxiosPromise<any> {
     return axios.post('/auth/register', { username, password });

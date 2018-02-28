@@ -1,11 +1,8 @@
-import * as React from 'react';
-import { withStyles, StyleRules } from 'material-ui/styles';
-import Input, { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
-import { ListItemText } from 'material-ui/List';
+import { InputLabel } from 'material-ui/Input';
 import Select from 'material-ui/Select';
-import Checkbox from 'material-ui/Checkbox';
+import { StyleRules, withStyles } from 'material-ui/styles';
+import * as React from 'react';
 
 const styles: StyleRules = {
   formControl: {

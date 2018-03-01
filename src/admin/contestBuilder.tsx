@@ -235,7 +235,7 @@ class ContestBuilder extends React.Component<IContestBuilderProps, IContestBuild
     if (this.props.match.params.contestId)
       return contestApi.EditContest(contestInfo);
 
-    return contestApi.EditContest(contestInfo)
+    return contestApi.CreateContest(contestInfo)
       .then((id) => hashHistory.push('/admin/contest/' + id));
   }
 

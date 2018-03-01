@@ -19,7 +19,8 @@ class ContestInfoEditor extends React.Component<IContestInfoEditorProps, any> {
   constructor(props: IContestInfoEditorProps) {
     super(props);
     this.state = {
-      ...this.destructTime(props.contestInfo)
+      ...this.destructTime(props.contestInfo),
+      name: '',
     };
   }
 
@@ -51,6 +52,7 @@ class ContestInfoEditor extends React.Component<IContestInfoEditorProps, any> {
     this.props.onChangeContestInfo({
       ...this.props.contestInfo,
       ...this.constructTime(),
+      name: this.state.name,
     });
   }
 

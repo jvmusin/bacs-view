@@ -57,7 +57,7 @@ class AllSubmits extends React.Component<IAllSubmitsProps, IAllSubmitsState> {
           name={'username'}
           value={this.state.username}
           onChange={this.handleChange}
-          label={'Имя пользователь'}
+          label={'Имя пользователя'}
         />
         <NativeSelect
           values={problems.map(p => p.index)}

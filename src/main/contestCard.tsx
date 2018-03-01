@@ -29,7 +29,7 @@ function formatContinuingContestTime(now: Date, finish: Date) {
   const minDiff = getDateDiff(finish, now, TimeDiffType.Minutes);
   const hour = minDiff / 60 | 0;
   const min = minDiff % 60;
-  return (hour ? hour : '') + 'ч. ' + padToTwoDigit(min) + 'мин.';
+  return (hour ? (hour + 'ч. ') : '') + padToTwoDigit(min) + 'мин.';
 }
 
 const ContestCard = (props: IContestCardProps) => {

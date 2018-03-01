@@ -26,8 +26,8 @@ class Auth extends React.Component<any, IAuthState> {
   constructor(props) {
     super(props);
     this.state = {
-      login: '',
-      password: '',
+      login: undefined,
+      password: undefined,
       authState: AuthService.CheckAuth(),
       errorMessage: '',
       loading: false,
@@ -35,7 +35,6 @@ class Auth extends React.Component<any, IAuthState> {
   }
 
   signUp = () => {
-    this.setState({ loading: true, errorMessage: '' });
     AuthService.SignUp(this.state.login, this.state.password)
       .catch(error => {
         this.setState({ errorMessage: error.response.data, loading: false, });
@@ -46,16 +45,15 @@ class Auth extends React.Component<any, IAuthState> {
   }
 
   tryAuthorize = () => {
-    if (!this.state.loading)
-      this.setState({ loading: true, errorMessage: '' });
-
+    if (this.state.loading)
+      return;
     AuthService.Auth(this.state.login, this.state.password)
       .then(authState => this.setState({ authState, loading: false }))
       .catch(() => this.setState({
-          errorMessage: 'Не удалось авторизоваться ;(',
-          authState: AuthState.Fail,
-          loading: false
-        }));
+        errorMessage: 'Не удалось авторизоваться ;(',
+        authState: AuthState.Fail,
+        loading: false
+      }));
   }
 
   handleInputKeyPressed = (event) => {
@@ -63,10 +61,17 @@ class Auth extends React.Component<any, IAuthState> {
       this.tryAuthorize();
   }
 
+  handleInputChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    })
+  }
+
   render() {
-    if (this.state.authState === AuthState.Success)
+    const { authState, password, login, errorMessage, loading } = this.state;
+    if (authState === AuthState.Success)
       return this.props.children;
-    const isFailed = this.state.authState === AuthState.Fail;
+    const isFailed = authState === AuthState.Fail;
     return <Dialog
       className={this.props.classes.root}
       disableBackdropClick
@@ -79,35 +84,37 @@ class Auth extends React.Component<any, IAuthState> {
           autoFocus
           fullWidth
           placeholder='Логин'
-          value={this.state.login}
-          error={isFailed}
-          onChange={event => this.setState({ login: event.target.value })}
+          value={login}
+          error={isFailed || login === ''}
+          onChange={this.handleInputChange}
           onKeyPress={this.handleInputKeyPressed}
           type='text'
+          name='login'
         />
         <TextField
           fullWidth
           placeholder='Пароль'
-          value={this.state.password}
-          error={isFailed}
-          onChange={event => this.setState({ password: event.target.value })}
+          value={password}
+          error={isFailed || password === ''}
+          onChange={this.handleInputChange}
           onKeyPress={this.handleInputKeyPressed}
+          name='password'
           type='password'
         />
         <span>
           {
-            this.state.errorMessage
+            errorMessage
             &&
-            this.state.errorMessage
+            errorMessage
           }
         </span>
       </DialogContent>
       <DialogActions>
         {
-          !this.state.loading
+          !loading
           &&
           <Fragment>
-            <Button onClick={this.signUp} color='primary'>
+            <Button disabled={!login || !password} onClick={this.signUp} color='primary'>
               Зарегистрироваться
               </Button>
             <Button onClick={this.tryAuthorize} color='primary'>
@@ -115,7 +122,7 @@ class Auth extends React.Component<any, IAuthState> {
             </Button>
           </Fragment>
           ||
-          <CircularProgress className={this.props.classes.progress} size={30}  />
+          <CircularProgress className={this.props.classes.progress} size={30} />
         }
 
       </DialogActions>

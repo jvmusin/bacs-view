@@ -17,9 +17,9 @@ interface IStandingsProps {
 }
 
 const formatMinutes = (mins) => {
-  const minutes = mins / 60 | 0;
-  const hour = mins % 60;
-  return hour ? hour+':' : '' + minutes;
+  const hour = mins / 60 | 0;
+  const minutes = mins % 60;
+  return (hour ? hour+':' : '') + minutes;
 }
 
 const Standings = (props: IStandingsProps) => {

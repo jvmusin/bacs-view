@@ -3,6 +3,7 @@ import { InputLabel } from 'material-ui/Input';
 import Select from 'material-ui/Select';
 import { StyleRules, withStyles } from 'material-ui/styles';
 import * as React from 'react';
+import { isArray } from 'util';
 
 const styles: StyleRules = {
   formControl: {
@@ -13,7 +14,7 @@ const styles: StyleRules = {
 
 interface ISelectProps {
   onChange: (event: any) => void;
-  values: string[];
+  values: (string | string[])[];
   selectedValue: string;
   classes?: any;
   label: string;
@@ -38,14 +39,15 @@ const NativeSelect: SelectType = ({ selectedValue, classes, onChange, values, na
           }}
         >
           <option value=''></option>
-          {values.map(value => (
-            <option
-              key={value}
-              value={value}
+          {values.map(value => {
+            const [key, name] = isArray(value) ? value : [value, value];
+            return <option
+              key={key}
+              value={key}
             >
-              {value}
+              {name}
             </option>
-          ))}
+          })}
         </Select>
       </FormControl>
     </div>

@@ -172,7 +172,7 @@ export default class ContestController extends React.Component<IContestControlle
           render={() => <SubmitForm contestId={contestInfo && contestInfo.id} problems={problems} />} />
         <Route
           exact
-          path={this.to(PagePath.Problems)}
+          path={this.to(PagePath.Submits)}
           render={() => <Submits submissions={userSubmits} />} />
         <Route
           exact

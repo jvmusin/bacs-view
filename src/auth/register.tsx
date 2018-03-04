@@ -115,7 +115,7 @@ class Register extends React.Component<IRegisterProps, IRegisterState> {
           onChange={this.handleChange}
           value={birthDate}
           name='birthDate'
-          label='Дата начала'
+          label='Дата рождения'
         />
         <span>
           {

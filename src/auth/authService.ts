@@ -1,5 +1,10 @@
 import AuthApi from '../api/authApi';
-import { AuthState, SessionInfo, UserRole } from '../typings';
+import {
+  AuthStatus,
+  RegisterUserinfo,
+  SessionInfo,
+  UserRole
+  } from '../typings';
 
 function parseJwt(token): SessionInfo {
   if (!token)
@@ -31,19 +36,19 @@ const authCookieJWT = 'AuthBacsToken';
 const authHeaderName = 'authorization';
 
 export default class AuthService {
-  static SignUp(login: string, password: string) {
-    return AuthApi.SignUp(login, password);
+  static SignUp(userData: RegisterUserinfo) {
+    return AuthApi.SignUp(userData).then();
   }
 
-  static Auth(login: string, password: string): Promise<AuthState> {
+  static Auth(login: string, password: string): Promise<AuthStatus> {
     return AuthApi.Auth(login, password)
       .then(response => {
         const token = response.headers[authHeaderName];
         AuthApi.SetJWT(authHeaderName, token);
         document.cookie = authCookieJWT + '=' + token;
-        return AuthState.Success;
+        return AuthStatus.Success;
       })
-      .catch(() => Promise.resolve(AuthState.Fail));
+      .catch(() => Promise.resolve(AuthStatus.Fail));
   }
 
   static GetSessionInfo(): SessionInfo {
@@ -51,7 +56,7 @@ export default class AuthService {
     return parseJwt(token);
   }
 
-  static CheckAuth(): AuthState {
+  static CheckAuth(): AuthStatus {
     try {
       const token = getFromCookies(authCookieJWT);
       const info = parseJwt(token);
@@ -62,13 +67,13 @@ export default class AuthService {
       const now = new Date();
       if (expiresIn && now < expiresIn) {
         AuthApi.SetJWT(authHeaderName, token);
-        return AuthState.Success;
+        return AuthStatus.Success;
       }
     }
     catch (e) {
       console.log(e);
     }
-    return AuthState.None;
+    return AuthStatus.None;
   }
 
   static Logout() {

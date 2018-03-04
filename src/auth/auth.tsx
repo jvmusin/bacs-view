@@ -1,143 +1,73 @@
-import Button from 'material-ui/Button';
-import { CircularProgress } from 'material-ui/Progress';
-import { StyleRules } from 'material-ui/styles';
-import withStyles from 'material-ui/styles/withStyles';
-import TextField from 'material-ui/TextField';
 import * as React from 'react';
-import { Fragment } from 'react';
 import AuthService from './authService';
-import { AuthState } from '../typings';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from 'material-ui/Dialog';
-
+import Login from './login';
+import Register from './register';
+import { AuthStatus, RegisterUserinfo } from '../typings';
 
 interface IAuthState {
-  login: string;
-  password: string;
-  authState: AuthState;
-  errorMessage: string;
-  loading: boolean;
+  authStatus: AuthStatus;
+  errors: string[];
+  isRegister: boolean;
 }
 
 class Auth extends React.Component<any, IAuthState> {
   constructor(props) {
     super(props);
     this.state = {
-      login: undefined,
-      password: undefined,
-      authState: AuthService.CheckAuth(),
-      errorMessage: '',
-      loading: false,
+      authStatus: AuthService.CheckAuth(),
+      errors: [],
+      isRegister: false,
     };
   }
 
-  signUp = () => {
-    AuthService.SignUp(this.state.login, this.state.password)
-      .catch(error => {
-        this.setState({ errorMessage: error.response.data, loading: false, });
-        return Promise.reject(AuthState.Fail);
+  signUp = (userData: RegisterUserinfo) => {
+    this.setState({
+      authStatus: AuthStatus.Pending
+    });
+    AuthService.SignUp(userData)
+      .then(() => this.tryAuthorize(userData.username, userData.password, true))
+      .catch(errors => {
+        this.setState({ errors: errors, authStatus: AuthStatus.Fail });
       })
-      .then(() => this.tryAuthorize())
-      .catch(reason => this.setState({ authState: reason || AuthState.Fail }));
   }
 
-  tryAuthorize = () => {
-    if (this.state.loading)
+  tryAuthorize = (username, password, afterRegister?) => {
+    if (this.state.authStatus === AuthStatus.Pending && !afterRegister)
       return;
-    AuthService.Auth(this.state.login, this.state.password)
-      .then(authState => this.setState({ authState, loading: false }))
-      .catch(() => this.setState({
-        errorMessage: 'Не удалось авторизоваться ;(',
-        authState: AuthState.Fail,
-        loading: false
+    this.setState({
+      isRegister: false,
+      authStatus: AuthStatus.Pending
+    });
+    return AuthService.Auth(username, password)
+      .then(authStatus => this.setState({ authStatus }))
+      .catch(errors => this.setState({
+        errors: errors,
+        authStatus: AuthStatus.Fail,
       }));
   }
 
-  handleInputKeyPressed = (event) => {
-    if (event.key === 13 || event.key === 'Enter')
-      this.tryAuthorize();
-  }
-
-  handleInputChange = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    })
-  }
+  toggleRegisterModal = () => this.setState(prev => ({ isRegister: !prev.isRegister }))
 
   render() {
-    const { authState, password, login, errorMessage, loading } = this.state;
-    if (authState === AuthState.Success)
+    const { authStatus, errors, isRegister } = this.state;
+    if (authStatus === AuthStatus.Success)
       return this.props.children;
-    const isFailed = authState === AuthState.Fail;
-    return <Dialog
-      className={this.props.classes.root}
-      disableBackdropClick
-      disableEscapeKeyDown
-      open={true}
-    >
-      <DialogTitle>Вход</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          fullWidth
-          placeholder='Логин'
-          value={login}
-          error={isFailed || login === ''}
-          onChange={this.handleInputChange}
-          onKeyPress={this.handleInputKeyPressed}
-          type='text'
-          name='login'
-        />
-        <TextField
-          fullWidth
-          placeholder='Пароль'
-          value={password}
-          error={isFailed || password === ''}
-          onChange={this.handleInputChange}
-          onKeyPress={this.handleInputKeyPressed}
-          name='password'
-          type='password'
-        />
-        <span>
-          {
-            errorMessage
-            &&
-            errorMessage
-          }
-        </span>
-      </DialogContent>
-      <DialogActions>
-        {
-          !loading
-          &&
-          <Fragment>
-            <Button disabled={!login || !password} onClick={this.signUp} color='primary'>
-              Зарегистрироваться
-              </Button>
-            <Button onClick={this.tryAuthorize} color='primary'>
-              Войти
-            </Button>
-          </Fragment>
-          ||
-          <CircularProgress className={this.props.classes.progress} size={30} />
-        }
-
-      </DialogActions>
-    </Dialog>
+    return isRegister
+      ?
+      <Register
+        onBack={this.toggleRegisterModal}
+        authStatus={authStatus}
+        onRegister={this.signUp}
+        errors={errors}
+      />
+      :
+      <Login
+        authStatus={authStatus}
+        errors={errors}
+        onLogin={this.tryAuthorize}
+        onRegister={this.toggleRegisterModal}
+      />
   }
 }
 
-const styles: StyleRules = {
-  root: {
-    height: 'inherit !important'
-  },
-  progress: {
-    minWidth: 'initial',
-    marginRight: 40,
-  }
-}
-
-export default withStyles(styles)(Auth as any);
+export default Auth;

@@ -27,7 +27,8 @@ export interface ArchiveProblem extends ProblemInfo {
   }
 }
 
-export enum AuthState {
+export enum AuthStatus {
+  Pending,
   Success,
   Fail,
   None,
@@ -43,6 +44,16 @@ export type SessionInfo = {
   roles: UserRole[],
   sub: string,
   exp?: number,
+}
+
+export type RegisterUserinfo = {
+  username: string;
+  password: string;
+  email: string;
+  birthDate: string;
+  firstname: string;
+  lastname: string;
+  middlename: string;
 }
 
 export type User = {

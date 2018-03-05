@@ -22,7 +22,7 @@ const buildVerdictRow = (result: SubmissionResult) => {
   const { verdict, testsPassed } = result;
   const short = Verdict.short(verdict);
   const testsPassedStr = testsPassed || testsPassed === 0
-    ? ` тест ${testsPassed}`
+    ? ` на тесте ${testsPassed + 1}`
     : '';
 
   return short + testsPassedStr;

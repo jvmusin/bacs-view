@@ -20,12 +20,12 @@ const toSeconds = (ms) => Math.floor(ms / 1000);
 
 const buildVerdictRow = (result: SubmissionResult) => {
   const { verdict, testsPassed } = result;
-  const short = Verdict.short(verdict);
+  const localizedVerdict = Verdict.rus(verdict) || Verdict.short(verdict);
   const testsPassedStr = testsPassed || testsPassed === 0
     ? ` на тесте ${testsPassed + 1}`
     : '';
 
-  return short + testsPassedStr;
+  return localizedVerdict + testsPassedStr;
 }
 
 const Submits = ({ submissions, enhance }: ISubmitProps) => {

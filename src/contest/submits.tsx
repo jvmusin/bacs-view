@@ -64,7 +64,7 @@ const Submits = ({ submissions, enhance }: ISubmitProps) => {
                   <TableCell>
                     {toMB(submission.result.memoryUsed)} из {toMB(submission.problem.memoryLimitBytes)} MB
                       <br />
-                    {submission.result.timeUsed} мс из {toSeconds(submission.problem.timeLimitMillis)} сек.
+                    {submission.result.timeUsed || 0} мс из {toSeconds(submission.problem.timeLimitMillis)} сек.
                   </TableCell>
                 </TableRow>
               ))
